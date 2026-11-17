@@ -1,9 +1,9 @@
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
-import { applyI18n, T, tr } from './i18n.js?v=1794925430';
-import { setupLiquid } from './liquid.js?v=1794925430';
-import { setupHookCursor } from './cursor.js?v=1794925430';
-import { setupTransitions } from './transition.js?v=1794925430';
+import { applyI18n, T, tr } from './i18n.js?v=1794925674';
+import { setupLiquid } from './liquid.js?v=1794925674';
+import { setupHookCursor } from './cursor.js?v=1794925674';
+import { setupTransitions } from './transition.js?v=1794925674';
 
 applyI18n();
 setupTransitions();
@@ -97,7 +97,7 @@ const C = {
   underFog: new THREE.Color('#05202a'),
   abyss: new THREE.Color('#020a10'),
 };
-const sunDir = new THREE.Vector3(0.15, 0.07, -1).normalize();
+const sunDir = new THREE.Vector3(0.62, 0.075, -1).normalize();   // солнце правее, чтобы блик не стоял за слоганом
 const fogColor = new THREE.Color();
 scene.fog = new THREE.FogExp2(fogColor, 0.02);
 
@@ -528,7 +528,7 @@ addEventListener('pointerdown', (e) => {
   if (seaState.under > 0.5 || e.target.closest('a, button, input, select, textarea')) return;
   ndc.set((e.clientX / innerWidth) * 2 - 1, -(e.clientY / innerHeight) * 2 + 1);
   raycaster.setFromCamera(ndc, camera);
-  if (raycaster.ray.intersectPlane(waterPlane, hit)) addRipple(hit.x, hit.z, clock.elapsedTime, 2.2);
+  // рябь от клика отключена по просьбе пользователя
 });
 
 // Адаптивное качество: если кадров мало — снижаем разрешение моря
@@ -564,7 +564,7 @@ function tick() {
       mouseMoved = false;
       ndc.set(mouse.x, -mouse.y);
       raycaster.setFromCamera(ndc, camera);
-      if (under < 0.5 && raycaster.ray.intersectPlane(waterPlane, hit)) {
+      if (false && under < 0.5 && raycaster.ray.intersectPlane(waterPlane, hit)) {   // рябь от курсора отключена
         const dx = hit.x - lastRipple.x, dz = hit.z - lastRipple.z;
         if (dx * dx + dz * dz > 2.2 && t - lastRipple.t > 0.09) {
           addRipple(hit.x, hit.z, t, 1);
