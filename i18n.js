@@ -93,6 +93,12 @@ const EN = {
   'nf.text': 'We cast the line, but nothing bit. The link may be outdated or the page has drifted off with the current.',
   'nf.home': 'Back to the surface', 'nf.catalog': 'Products',
   'skip': 'Skip to content',
+  'mbar.call': 'Call', 'mbar.rfq': 'Request',
+  'docs.label': 'Documents', 'doc.soon': 'Document will be added',
+  'doc.note': 'A scan of the document will appear here once approved by the company. A PDF download will be available.',
+  'doc1.kicker': 'European Union', 'doc1.title': 'EU number 68N', 'doc1.sub': 'Approval of the plant to supply fish products to the EU',
+  'doc2.kicker': 'Quality control', 'doc2.title': 'HACCP', 'doc2.sub': 'Food safety management system',
+  'doc3.kicker': 'Certification', 'doc3.title': 'Declarations of conformity', 'doc3.sub': 'Product documents — on request',
 };
 
 const DE = {
@@ -174,6 +180,12 @@ const DE = {
   'nf.text': 'Wir haben die Angel ausgeworfen, aber nichts hat angebissen. Vielleicht ist der Link veraltet oder die Seite ist mit der Strömung davongetrieben.',
   'nf.home': 'Zurück an die Oberfläche', 'nf.catalog': 'Produkte',
   'skip': 'Zum Inhalt springen',
+  'mbar.call': 'Anrufen', 'mbar.rfq': 'Anfrage',
+  'docs.label': 'Dokumente', 'doc.soon': 'Dokument folgt',
+  'doc.note': 'Ein Scan des Dokuments erscheint hier nach Abstimmung mit dem Unternehmen. Ein PDF-Download wird verfügbar sein.',
+  'doc1.kicker': 'Europäische Union', 'doc1.title': 'EU-Nummer 68N', 'doc1.sub': 'Zulassung des Betriebs für Lieferungen von Fischprodukten in die EU',
+  'doc2.kicker': 'Qualitätskontrolle', 'doc2.title': 'HACCP', 'doc2.sub': 'Managementsystem für Lebensmittelsicherheit',
+  'doc3.kicker': 'Zertifizierung', 'doc3.title': 'Konformitätserklärungen', 'doc3.sub': 'Produktdokumente – auf Anfrage',
 };
 
 const DICT = LANG === 'de' ? DE : LANG === 'en' ? EN : null;

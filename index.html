@@ -54,7 +54,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="preload" href="fonts/BalticGrotesk-ExtraLight.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="style.css?v=1794928786">
+<link rel="stylesheet" href="style.css?v=1794929351">
 <script type="importmap">
 { "imports": {
   "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
@@ -74,6 +74,8 @@
 <div class="curtain" aria-hidden="true"><svg viewBox="0 0 40 40" class="curtain__mark"><circle cx="20" cy="20" r="19" /><path d="M6 23c5-4 9-4 14 0s9 4 14 0M6 17c5-4 9-4 14 0s9 4 14 0" /></svg></div>
 <canvas id="sea" aria-hidden="true"></canvas>
 <div class="veil" aria-hidden="true"></div>
+<div class="surface-light" aria-hidden="true"></div>
+<div class="surface-flash" aria-hidden="true"></div>
 <div class="grain" aria-hidden="true"></div>
 
 <!-- Глубиномер -->
@@ -102,8 +104,31 @@
       <span class="sound__label" data-i18n="nav.sound">Звук</span>
     </button>
     <a href="#buyers" class="nav__cta magnetic" data-cursor><span data-i18n="nav.cta">Связаться</span></a>
+    <button class="burger" type="button" aria-expanded="false" aria-controls="mmenu" aria-label="Меню"><i></i><i></i></button>
   </div>
 </header>
+
+<!-- Мобильное меню -->
+<div class="mmenu" id="mmenu" aria-hidden="true">
+  <nav class="mmenu__links">
+    <a href="#about" data-i18n="nav.about">Компания</a>
+    <a href="#process" data-i18n="nav.process">Производство</a>
+    <a href="#products" data-i18n="nav.products">Продукция</a>
+    <a href="#catalog" data-i18n="catalog.label">Рыба и филе</a>
+    <a href="#export" data-i18n="nav.export">Экспорт</a>
+    <a href="#buyers" data-i18n="nav.buyers">Закупщикам</a>
+  </nav>
+  <div class="mmenu__foot">
+    <div class="lang"><a href="?lang=ru" data-lang="ru">RU</a><span>/</span><a href="?lang=en" data-lang="en">EN</a><span>/</span><a href="?lang=de" data-lang="de">DE</a></div>
+    <a href="tel:+74012311576" class="mmenu__phone">+7 (4012) 311-576</a>
+  </div>
+</div>
+
+<!-- Мобильная панель действий -->
+<div class="mbar" aria-label="Быстрые действия">
+  <a href="tel:+74012311576" class="mbar__call"><span data-i18n="mbar.call">Позвонить</span></a>
+  <a href="#buyers" class="mbar__rfq"><span data-i18n="mbar.rfq">Запрос</span></a>
+</div>
 
 <main>
 
@@ -154,7 +179,7 @@
   <section class="film" aria-label="Балтийское море">
     <div class="film__pin">
       <div class="film__frame">
-        <video class="film__video" data-src="media/trawler.mp4" data-src-m="media/trawler-m.mp4" poster="media/trawler-m.jpg" muted loop playsinline preload="none"></video>
+        <video class="film__video" data-src="media/trawler.mp4" data-src-m="media/trawler-m.mp4" poster="media/trawler-m.webp" muted loop playsinline preload="none"></video>
         <div class="film__shade"></div>
       </div>
       <div class="film__text">
@@ -176,28 +201,28 @@
 
       <article class="step">
         <span class="step__n">01</span>
-        <figure class="step__media"><img src="media/catch.jpg" alt="" loading="lazy"></figure>
+        <figure class="step__media"><picture><source srcset="media/catch.avif" type="image/avif"><source srcset="media/catch.webp" type="image/webp"><img src="media/catch.jpg" alt="" loading="lazy"></picture></figure>
         <h3 data-i18n="step1.h">Улов</h3>
         <p data-i18n="step1.p">Промышленное рыболовство в Балтийском море и заливах: треска, камбала, салака, килька.</p>
       </article>
 
       <article class="step">
         <span class="step__n">02</span>
-        <figure class="step__media"><video data-src="media/fillet.mp4" data-src-m="media/fillet-m.mp4" poster="media/fillet.jpg" muted loop playsinline preload="none"></video></figure>
+        <figure class="step__media"><video data-src="media/fillet.mp4" data-src-m="media/fillet-m.mp4" poster="media/fillet.webp" muted loop playsinline preload="none"></video></figure>
         <h3 data-i18n="step2.h">Разделка</h3>
         <p data-i18n="step2.p">Филе трески, судака и окуня на современном оборудовании. По заказу делаем филе из мороженого сырья.</p>
       </article>
 
       <article class="step">
         <span class="step__n">03</span>
-        <figure class="step__media"><img src="media/cold.jpg" alt="" loading="lazy"></figure>
+        <figure class="step__media"><picture><source srcset="media/cold.avif" type="image/avif"><source srcset="media/cold.webp" type="image/webp"><img src="media/cold.jpg" alt="" loading="lazy"></picture></figure>
         <h3 data-i18n="step3.h">Холод</h3>
         <p data-i18n="step3.p">Собственные холодильники для сырья и готовой продукции. Свежесть сохраняется от причала до клиента.</p>
       </article>
 
       <article class="step">
         <span class="step__n">04</span>
-        <figure class="step__media"><video data-src="media/cans.mp4" data-src-m="media/cans-m.mp4" poster="media/cans.jpg" muted loop playsinline preload="none"></video></figure>
+        <figure class="step__media"><video data-src="media/cans.mp4" data-src-m="media/cans-m.mp4" poster="media/cans.webp" muted loop playsinline preload="none"></video></figure>
         <h3 data-i18n="step4.h">Консервы</h3>
         <p data-i18n="step4.p">Свой консервный цех: шпроты в масле, килька в томатном соусе и печень трески в стекле и жести.</p>
       </article>
@@ -249,19 +274,19 @@
       <h2 class="title"><span class="mask"><span data-i18n="catalog.l1">Из Балтийского</span></span><span class="mask"><span data-i18n="catalog.l2"><em>моря и заливов</em></span></span></h2>
     </div>
     <ul class="catalog__list">
-      <li><a class="row" href="product.html?p=cod-fillet"><span class="row__n">01</span><span class="row__name"><span class="t" data-i18n="row.1">Филе трески</span><span class="fill" data-i18n="row.1" aria-hidden="true" style="background-image:url(media/p-cod-fillet.jpg)">Филе трески</span></span><span class="row__type" data-i18n="row.chilled">охлаждённое / замороженное</span><img class="row__thumb" src="media/r-cod-fillet.jpg" alt="" loading="lazy"><span class="row__arrow">↗</span></a></li>
-      <li><a class="row" href="product.html?p=zander-fillet"><span class="row__n">02</span><span class="row__name"><span class="t" data-i18n="row.2">Филе судака</span><span class="fill" data-i18n="row.2" aria-hidden="true" style="background-image:url(media/p-zander.jpg)">Филе судака</span></span><span class="row__type" data-i18n="row.chilled">охлаждённое / замороженное</span><img class="row__thumb" src="media/r-zander.jpg" alt="" loading="lazy"><span class="row__arrow">↗</span></a></li>
-      <li><a class="row" href="product.html?p=perch-fillet"><span class="row__n">03</span><span class="row__name"><span class="t" data-i18n="row.3">Филе окуня</span><span class="fill" data-i18n="row.3" aria-hidden="true" style="background-image:url(media/p-perch.jpg)">Филе окуня</span></span><span class="row__type" data-i18n="row.chilled">охлаждённое / замороженное</span><img class="row__thumb" src="media/r-perch.jpg" alt="" loading="lazy"><span class="row__arrow">↗</span></a></li>
-      <li><a class="row" href="product.html?p=cod"><span class="row__n">04</span><span class="row__name"><span class="t" data-i18n="row.4">Треска</span><span class="fill" data-i18n="row.4" aria-hidden="true" style="background-image:url(media/p-cod.jpg)">Треска</span></span><span class="row__type" data-i18n="row.frozen">свежемороженая</span><img class="row__thumb" src="media/r-cod.jpg" alt="" loading="lazy"><span class="row__arrow">↗</span></a></li>
-      <li><a class="row" href="product.html?p=flounder"><span class="row__n">05</span><span class="row__name"><span class="t" data-i18n="row.5">Камбала</span><span class="fill" data-i18n="row.5" aria-hidden="true" style="background-image:url(media/p-flounder.jpg)">Камбала</span></span><span class="row__type" data-i18n="row.frozen">свежемороженая</span><img class="row__thumb" src="media/r-flounder.jpg" alt="" loading="lazy"><span class="row__arrow">↗</span></a></li>
-      <li><a class="row" href="product.html?p=herring"><span class="row__n">06</span><span class="row__name"><span class="t" data-i18n="row.6">Салака</span><span class="fill" data-i18n="row.6" aria-hidden="true" style="background-image:url(media/p-herring.jpg)">Салака</span></span><span class="row__type" data-i18n="row.frozen">свежемороженая</span><img class="row__thumb" src="media/r-herring.jpg" alt="" loading="lazy"><span class="row__arrow">↗</span></a></li>
-      <li><a class="row" href="product.html?p=sprat"><span class="row__n">07</span><span class="row__name"><span class="t" data-i18n="row.7">Килька</span><span class="fill" data-i18n="row.7" aria-hidden="true" style="background-image:url(media/p-sprat.jpg)">Килька</span></span><span class="row__type" data-i18n="row.frozen">свежемороженая</span><img class="row__thumb" src="media/r-sprat.jpg" alt="" loading="lazy"><span class="row__arrow">↗</span></a></li>
+      <li><a class="row" href="product.html?p=cod-fillet"><span class="row__n">01</span><span class="row__name"><span class="t" data-i18n="row.1">Филе трески</span><span class="fill" data-i18n="row.1" aria-hidden="true" style="background-image:url(media/p-cod-fillet.jpg);background-image:image-set(url(media/p-cod-fillet.avif) type('image/avif'), url(media/p-cod-fillet.webp) type('image/webp'), url(media/p-cod-fillet.jpg) type('image/jpeg'))">Филе трески</span></span><span class="row__type" data-i18n="row.chilled">охлаждённое / замороженное</span><picture><source srcset="media/r-cod-fillet.avif" type="image/avif"><source srcset="media/r-cod-fillet.webp" type="image/webp"><img class="row__thumb" src="media/r-cod-fillet.jpg" alt="" loading="lazy"></picture><span class="row__arrow">↗</span></a></li>
+      <li><a class="row" href="product.html?p=zander-fillet"><span class="row__n">02</span><span class="row__name"><span class="t" data-i18n="row.2">Филе судака</span><span class="fill" data-i18n="row.2" aria-hidden="true" style="background-image:url(media/p-zander.jpg);background-image:image-set(url(media/p-zander.avif) type('image/avif'), url(media/p-zander.webp) type('image/webp'), url(media/p-zander.jpg) type('image/jpeg'))">Филе судака</span></span><span class="row__type" data-i18n="row.chilled">охлаждённое / замороженное</span><picture><source srcset="media/r-zander.avif" type="image/avif"><source srcset="media/r-zander.webp" type="image/webp"><img class="row__thumb" src="media/r-zander.jpg" alt="" loading="lazy"></picture><span class="row__arrow">↗</span></a></li>
+      <li><a class="row" href="product.html?p=perch-fillet"><span class="row__n">03</span><span class="row__name"><span class="t" data-i18n="row.3">Филе окуня</span><span class="fill" data-i18n="row.3" aria-hidden="true" style="background-image:url(media/p-perch.jpg);background-image:image-set(url(media/p-perch.avif) type('image/avif'), url(media/p-perch.webp) type('image/webp'), url(media/p-perch.jpg) type('image/jpeg'))">Филе окуня</span></span><span class="row__type" data-i18n="row.chilled">охлаждённое / замороженное</span><picture><source srcset="media/r-perch.avif" type="image/avif"><source srcset="media/r-perch.webp" type="image/webp"><img class="row__thumb" src="media/r-perch.jpg" alt="" loading="lazy"></picture><span class="row__arrow">↗</span></a></li>
+      <li><a class="row" href="product.html?p=cod"><span class="row__n">04</span><span class="row__name"><span class="t" data-i18n="row.4">Треска</span><span class="fill" data-i18n="row.4" aria-hidden="true" style="background-image:url(media/p-cod.jpg);background-image:image-set(url(media/p-cod.avif) type('image/avif'), url(media/p-cod.webp) type('image/webp'), url(media/p-cod.jpg) type('image/jpeg'))">Треска</span></span><span class="row__type" data-i18n="row.frozen">свежемороженая</span><picture><source srcset="media/r-cod.avif" type="image/avif"><source srcset="media/r-cod.webp" type="image/webp"><img class="row__thumb" src="media/r-cod.jpg" alt="" loading="lazy"></picture><span class="row__arrow">↗</span></a></li>
+      <li><a class="row" href="product.html?p=flounder"><span class="row__n">05</span><span class="row__name"><span class="t" data-i18n="row.5">Камбала</span><span class="fill" data-i18n="row.5" aria-hidden="true" style="background-image:url(media/p-flounder.jpg);background-image:image-set(url(media/p-flounder.avif) type('image/avif'), url(media/p-flounder.webp) type('image/webp'), url(media/p-flounder.jpg) type('image/jpeg'))">Камбала</span></span><span class="row__type" data-i18n="row.frozen">свежемороженая</span><picture><source srcset="media/r-flounder.avif" type="image/avif"><source srcset="media/r-flounder.webp" type="image/webp"><img class="row__thumb" src="media/r-flounder.jpg" alt="" loading="lazy"></picture><span class="row__arrow">↗</span></a></li>
+      <li><a class="row" href="product.html?p=herring"><span class="row__n">06</span><span class="row__name"><span class="t" data-i18n="row.6">Салака</span><span class="fill" data-i18n="row.6" aria-hidden="true" style="background-image:url(media/p-herring.jpg);background-image:image-set(url(media/p-herring.avif) type('image/avif'), url(media/p-herring.webp) type('image/webp'), url(media/p-herring.jpg) type('image/jpeg'))">Салака</span></span><span class="row__type" data-i18n="row.frozen">свежемороженая</span><picture><source srcset="media/r-herring.avif" type="image/avif"><source srcset="media/r-herring.webp" type="image/webp"><img class="row__thumb" src="media/r-herring.jpg" alt="" loading="lazy"></picture><span class="row__arrow">↗</span></a></li>
+      <li><a class="row" href="product.html?p=sprat"><span class="row__n">07</span><span class="row__name"><span class="t" data-i18n="row.7">Килька</span><span class="fill" data-i18n="row.7" aria-hidden="true" style="background-image:url(media/p-sprat.jpg);background-image:image-set(url(media/p-sprat.avif) type('image/avif'), url(media/p-sprat.webp) type('image/webp'), url(media/p-sprat.jpg) type('image/jpeg'))">Килька</span></span><span class="row__type" data-i18n="row.frozen">свежемороженая</span><picture><source srcset="media/r-sprat.avif" type="image/avif"><source srcset="media/r-sprat.webp" type="image/webp"><img class="row__thumb" src="media/r-sprat.jpg" alt="" loading="lazy"></picture><span class="row__arrow">↗</span></a></li>
     </ul>
   </section>
 
   <!-- 6b. Пауза: побережье -->
   <section class="coast" aria-label="Побережье Балтийского моря">
-    <figure class="coast__frame"><video data-src="media/coast.mp4" data-src-m="media/coast-m.mp4" poster="media/coast-m.jpg" muted loop playsinline preload="none"></video></figure>
+    <figure class="coast__frame"><video data-src="media/coast.mp4" data-src-m="media/coast-m.mp4" poster="media/coast-m.webp" muted loop playsinline preload="none"></video></figure>
     <div class="coast__content">
       <p class="label">54°40′ N · 20°08′ E</p>
       <h2 class="coast__title"><span class="mask"><span data-i18n="coast.l1">Наше море</span></span><span class="mask"><span data-i18n="coast.l2"><em>рядом с цехом</em></span></span></h2>
@@ -309,6 +334,43 @@
       <article class="bcard"><span class="bcard__n">02</span><h3 data-i18n="b2.h">Сертификаты</h3><p data-i18n="b2.p">Еврономер 68N, HACCP и декларации соответствия.</p><span class="bcard__badge" data-i18n="badge.soon">PDF · скоро</span></article>
       <article class="bcard"><span class="bcard__n">03</span><h3 data-i18n="b3.h">Хранение и сроки</h3><p data-i18n="b3.p">Условия хранения и сроки годности охлаждённой, замороженной продукции и консервов.</p><span class="bcard__badge" data-i18n="badge.soon2">Скоро</span></article>
       <article class="bcard"><span class="bcard__n">04</span><h3 data-i18n="b4.h">Прайс-лист</h3><p data-i18n="b4.p">Актуальные условия для оптовых покупателей — по запросу.</p><span class="bcard__badge" data-i18n="badge.request">По запросу</span></article>
+    </div>
+
+
+    <div class="docs">
+      <p class="docs__label" data-i18n="docs.label">Документы</p>
+      <div class="docs__grid">
+        <button class="doc" type="button" data-doc="0">
+          <span class="doc__paper">
+            <span class="doc__top"><span class="doc__kicker" data-i18n="doc1.kicker">Европейский союз</span><span class="doc__no">№ ————</span></span>
+            <span class="doc__title" data-i18n="doc1.title">Еврономер 68N</span>
+            <span class="doc__sub" data-i18n="doc1.sub">Допуск предприятия к поставкам рыбной продукции в страны ЕС</span>
+            <span class="doc__lines" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+            <svg class="doc__seal" viewBox="0 0 120 120" aria-hidden="true"><defs><path id="sealPath0" d="M60 60 m-44 0 a44 44 0 1 1 88 0 a44 44 0 1 1 -88 0"/></defs><circle cx="60" cy="60" r="56"/><circle cx="60" cy="60" r="34"/><text><textPath href="#sealPath0">БАЛТИЙСКИЕ МОРЕПРОДУКТЫ · С 2005 ·</textPath></text><path d="M42 64c6-5 12-5 18 0s12 5 18 0M42 56c6-5 12-5 18 0s12 5 18 0"/></svg>
+            <span class="doc__soon" data-i18n="doc.soon">Документ будет добавлен</span>
+          </span>
+        </button>
+        <button class="doc" type="button" data-doc="1">
+          <span class="doc__paper">
+            <span class="doc__top"><span class="doc__kicker" data-i18n="doc2.kicker">Контроль качества</span><span class="doc__no">№ ————</span></span>
+            <span class="doc__title" data-i18n="doc2.title">HACCP</span>
+            <span class="doc__sub" data-i18n="doc2.sub">Система управления безопасностью пищевой продукции</span>
+            <span class="doc__lines" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+            <svg class="doc__seal" viewBox="0 0 120 120" aria-hidden="true"><defs><path id="sealPath1" d="M60 60 m-44 0 a44 44 0 1 1 88 0 a44 44 0 1 1 -88 0"/></defs><circle cx="60" cy="60" r="56"/><circle cx="60" cy="60" r="34"/><text><textPath href="#sealPath1">БАЛТИЙСКИЕ МОРЕПРОДУКТЫ · С 2005 ·</textPath></text><path d="M42 64c6-5 12-5 18 0s12 5 18 0M42 56c6-5 12-5 18 0s12 5 18 0"/></svg>
+            <span class="doc__soon" data-i18n="doc.soon">Документ будет добавлен</span>
+          </span>
+        </button>
+        <button class="doc" type="button" data-doc="2">
+          <span class="doc__paper">
+            <span class="doc__top"><span class="doc__kicker" data-i18n="doc3.kicker">Сертификация</span><span class="doc__no">№ ————</span></span>
+            <span class="doc__title" data-i18n="doc3.title">Декларации соответствия</span>
+            <span class="doc__sub" data-i18n="doc3.sub">Документы на продукцию — по запросу</span>
+            <span class="doc__lines" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+            <svg class="doc__seal" viewBox="0 0 120 120" aria-hidden="true"><defs><path id="sealPath2" d="M60 60 m-44 0 a44 44 0 1 1 88 0 a44 44 0 1 1 -88 0"/></defs><circle cx="60" cy="60" r="56"/><circle cx="60" cy="60" r="34"/><text><textPath href="#sealPath2">БАЛТИЙСКИЕ МОРЕПРОДУКТЫ · С 2005 ·</textPath></text><path d="M42 64c6-5 12-5 18 0s12 5 18 0M42 56c6-5 12-5 18 0s12 5 18 0"/></svg>
+            <span class="doc__soon" data-i18n="doc.soon">Документ будет добавлен</span>
+          </span>
+        </button>
+      </div>
     </div>
 
     <form class="rfq" novalidate>
@@ -366,6 +428,14 @@
   </section>
 </main>
 
+<div class="doc-modal" aria-hidden="true">
+  <div class="doc-modal__inner" role="dialog" aria-modal="true" aria-label="Документ">
+    <button class="doc-modal__close" type="button" aria-label="Закрыть">×</button>
+    <div class="doc-modal__slot"></div>
+    <p class="doc-modal__note" data-i18n="doc.note">Скан документа появится здесь после согласования с компанией. PDF можно будет скачать.</p>
+  </div>
+</div>
+
 <footer class="footer">
   <div class="footer__bar">
     <span data-i18n="footer.copy">© 2005–2026 ООО «Балтийские морепродукты»</span>
@@ -373,6 +443,6 @@
   </div>
 </footer>
 
-<script type="module" src="app.js?v=1794928786"></script>
+<script type="module" src="app.js?v=1794929351"></script>
 </body>
 </html>

@@ -1,6 +1,7 @@
-import { applyI18n, LI, tr, PRODUCT_LIST } from './i18n.js?v=1794928786';
-import { setupLiquid } from './liquid.js?v=1794928786';
-import { setupTransitions } from './transition.js?v=1794928786';
+import { applyI18n, LI, LANG, tr, PRODUCT_LIST } from './i18n.js?v=1794929351';
+import { typograf } from './typo.js?v=1794929351';
+import { setupLiquid } from './liquid.js?v=1794929351';
+import { setupTransitions } from './transition.js?v=1794929351';
 
 /* =========================================================
    Страница продукта (заглушка): данные из PRODUCT_LIST
@@ -26,12 +27,13 @@ document.querySelector('.pp-lead').textContent = p.text[L];
 
 const media = document.querySelector('.pp-media');
 media.innerHTML = p.img
-  ? `<img src="${p.img}" alt="${p.name[L]}">`
+  ? (() => { const b = p.img.replace(/\.jpg$/, ''); return `<picture><source srcset="${b}.avif" type="image/avif"><source srcset="${b}.webp" type="image/webp"><img src="${p.img}" alt="${p.name[L]}"></picture>`; })()
   : `<div class="pp-media__soon"><svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="19"/><path d="M6 23c5-4 9-4 14 0s9 4 14 0M6 17c5-4 9-4 14 0s9 4 14 0"/></svg><span>${tr('pp.photoSoon', 'Фото скоро')}</span></div>`;
 
 const nx = document.querySelector('.pp-next');
 nx.href = `product.html?p=${next.slug}`;
 nx.querySelector('.pp-next__name').textContent = next.name[L];
+typograf(document.body, LANG);
 
 /* ---------- скролл и моушен ---------- */
 gsap.registerPlugin(ScrollTrigger);
@@ -49,9 +51,9 @@ const tl = gsap.timeline({ delay: 0.35 });
 tl.fromTo('.pp-title .mask > span', { y: 0, yPercent: 115, rotate: 3 }, { y: 0, yPercent: 0, rotate: 0, duration: 1.6, ease: 'expo.out', stagger: 0.1 })
   .from('.pp-back, .pp-type, .pp-lead, .pp-cta', { opacity: 0, y: 24, duration: 1.1, ease: 'power3.out', stagger: 0.07 }, 0.2)
   .fromTo('.pp-media', { clipPath: 'inset(100% 0% 0% 0%)' }, { clipPath: 'inset(0% 0% 0% 0%)', duration: 1.6, ease: 'expo.inOut' }, 0)
-  .from('.pp-media > *', { scale: 1.25, duration: 2, ease: 'expo.out' }, 0.2);
+  .from('.pp-media img, .pp-media .pp-media__soon', { scale: 1.25, duration: 2, ease: 'expo.out' }, 0.2);
 
-gsap.to('.pp-media > *', { yPercent: 10, ease: 'none', scrollTrigger: { trigger: '.pp-hero', start: 'top top', end: 'bottom top', scrub: true } });
+gsap.to('.pp-media img, .pp-media .pp-media__soon', { yPercent: 10, ease: 'none', scrollTrigger: { trigger: '.pp-hero', start: 'top top', end: 'bottom top', scrub: true } });
 gsap.from('.pp-table > div', { opacity: 0, y: 30, duration: 1, ease: 'expo.out', stagger: 0.07, clearProps: 'transform,opacity',
   scrollTrigger: { trigger: '.pp-table', start: 'top 85%' } });
 gsap.from('.pp-next__name', { yPercent: 40, opacity: 0, duration: 1.4, ease: 'expo.out', scrollTrigger: { trigger: '.pp-next', start: 'top 90%' } });

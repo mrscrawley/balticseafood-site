@@ -1,10 +1,12 @@
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
-import { applyI18n, T, tr } from './i18n.js?v=1794928786';
-import { setupLiquid } from './liquid.js?v=1794928786';
-import { setupTransitions } from './transition.js?v=1794928786';
+import { applyI18n, T, tr, LANG } from './i18n.js?v=1794929351';
+import { typograf } from './typo.js?v=1794929351';
+import { setupLiquid } from './liquid.js?v=1794929351';
+import { setupTransitions } from './transition.js?v=1794929351';
 
 applyI18n();
+typograf(document.body, LANG);
 setupTransitions();
 
 /* =========================================================
@@ -95,9 +97,12 @@ const C = {
   shallow: new THREE.Color('#1b4250'),
   underFog: new THREE.Color('#05202a'),
   abyss: new THREE.Color('#020a10'),
+  shallow: new THREE.Color('#0d3a48'),   // у поверхности — светлая бирюза
+  deepest: new THREE.Color('#010407'),   // 459 м — почти чёрный
 };
 const sunDir = new THREE.Vector3(0.62, 0.075, -1).normalize();   // солнце правее, чтобы блик не стоял за слоганом
 const fogColor = new THREE.Color();
+const underColor = new THREE.Color();
 scene.fog = new THREE.FogExp2(fogColor, 0.02);
 
 // Небо
@@ -242,7 +247,7 @@ pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
 pGeo.setAttribute('aRand', new THREE.BufferAttribute(pRand, 1));
 const pMat = new THREE.ShaderMaterial({
   transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
-  uniforms: { uTime: { value: 0 }, uOpacity: { value: 0 }, uPR: { value: renderer.getPixelRatio() } },
+  uniforms: { uTime: { value: 0 }, uOpacity: { value: 0 }, uPR: { value: renderer.getPixelRatio() }, uTint: { value: new THREE.Color(0.72, 0.88, 0.92) } },
   vertexShader: /* glsl */`
     uniform float uTime, uPR;
     attribute float aRand;
@@ -259,11 +264,12 @@ const pMat = new THREE.ShaderMaterial({
     }`,
   fragmentShader: /* glsl */`
     uniform float uOpacity;
+    uniform vec3 uTint;
     varying float vA;
     void main(){
       float d = length(gl_PointCoord - 0.5);
       float a = smoothstep(0.5, 0.0, d);
-      gl_FragColor = vec4(0.72, 0.88, 0.92, a * vA * uOpacity);
+      gl_FragColor = vec4(uTint, a * vA * uOpacity);
     }`,
 });
 const plankton = new THREE.Points(pGeo, pMat);
@@ -558,12 +564,20 @@ function updateDepth() {
   }
 }
 
+let prevUnder = 0, lastLight = '';
+const surfaceLight = document.querySelector('.surface-light');
+addEventListener('bs-surface', (e) => {
+  if (e.detail === 'up' && !reduceMotion) gsap.fromTo('.surface-flash', { opacity: 0 }, { opacity: 1, duration: 0.25, ease: 'power2.out', yoyo: true, repeat: 1, repeatDelay: 0.1 });
+});
+
 function tick() {
   const dt = Math.min(clock.getDelta(), 0.05);
   const t = reduceMotion ? 6 : clock.elapsedTime;
   mouse.sx = lerp(mouse.sx, mouse.x, 0.05);
   mouse.sy = lerp(mouse.sy, mouse.y, 0.05);
   if (!document.hidden) adaptQuality(dt);
+  updateDepth();
+  const dn = clamp(depthShown / MAX_DEPTH);   // 0 у поверхности → 1 на 459 м
 
   if (seaVisible) {
     const tg = cameraTarget(lenis.scroll);
@@ -574,6 +588,16 @@ function tick() {
     const under = clamp((0.4 - camera.position.y) / 1.2);
     const depthT = clamp((-camera.position.y - 2) / 10);
     seaState.under = under; seaState.depthT = depthT;
+    // пересечение поверхности: событие для звука и вспышки
+    if (intro.v < 0.05) {
+      if (prevUnder > 0.5 && under <= 0.5) dispatchEvent(new CustomEvent('bs-surface', { detail: 'up' }));
+      else if (prevUnder <= 0.5 && under > 0.5) dispatchEvent(new CustomEvent('bs-surface', { detail: 'down' }));
+    }
+    prevUnder = under;
+    // свет сверху нарастает при подъёме к контактам
+    const riseT = smooth(clamp((lenis.scroll - keys.riseStart) / (keys.riseEnd - keys.riseStart)));
+    const sl = (riseT * 0.9).toFixed(3);
+    if (sl !== lastLight) { surfaceLight.style.opacity = sl; lastLight = sl; }
 
     // курсор над водой → рябь; под водой → точка, от которой шарахается стая
     if (mouseMoved && !isTouch && !reduceMotion) {
@@ -593,9 +617,11 @@ function tick() {
       }
     }
     // туман и цвета
-    fogColor.copy(C.horizon).lerp(C.underFog, under).lerp(C.abyss, depthT * under * 0.7);
+    // цвет воды зависит от глубины: светлая бирюза → почти чёрная бездна
+    underColor.copy(C.shallow).lerp(C.deepest, Math.pow(dn, 0.75));
+    fogColor.copy(C.horizon).lerp(underColor, under);
     scene.fog.color.copy(fogColor);
-    const density = lerp(0.012, lerp(0.05, 0.075, depthT), under);
+    const density = lerp(0.012, lerp(0.042, 0.09, dn), under);
     scene.fog.density = density;
     oceanMat.uniforms.uFogDensity.value = density;
     renderer.setClearColor(fogColor);
@@ -610,13 +636,15 @@ function tick() {
     ocean.position.z = Math.round(camera.position.z / 20) * 20;
 
     pMat.uniforms.uTime.value = t;
-    pMat.uniforms.uOpacity.value = under;
+    pMat.uniforms.uOpacity.value = under * (0.8 + dn * 0.7);
+    // на глубине взвесь превращается в холодные искры биолюминесценции
+    pMat.uniforms.uTint.value.setRGB(lerp(0.72, 0.38, dn), lerp(0.88, 0.95, dn), lerp(0.92, 1.0, dn));
     plankton.position.set(camera.position.x, 0, camera.position.z);
 
     rays.position.set(camera.position.x, 0, camera.position.z);
     rays.children.forEach((m) => {
       m.material.uniforms.uTime.value = t;
-      m.material.uniforms.uOpacity.value = under * 0.09 * (1 - depthT * 0.6);
+      m.material.uniforms.uOpacity.value = under * 0.1 * Math.max(0, 1 - dn * 1.7);
       m.rotation.z = m.userData.base + Math.sin(t * 0.2 + m.userData.seed) * 0.05;
       m.lookAt(camera.position.x, m.position.y, camera.position.z + 30);
     });
@@ -660,8 +688,6 @@ function tick() {
 
   }
 
-  updateDepth();
-
   if (tinState.visible) {
     const bob = Math.sin(t * 1.1) * 0.12;
     tinGroup.position.y = bob + (1 - tinState.enter) * -3;
@@ -685,7 +711,7 @@ addEventListener('resize', resize);
    ========================================================= */
 // Разбиваем манифест на слова
 const man = document.querySelector('.manifesto__text');
-man.innerHTML = man.textContent.trim().split(/\s+/).map((w) => `<span class="w">${w} </span>`).join('');
+man.innerHTML = man.textContent.trim().split(/[ \t\n]+/).map((w) => `<span class="w">${w} </span>`).join('');
 
 function setupScroll() {
   // Hero уходит наверх
@@ -768,7 +794,7 @@ function setupScroll() {
       const fig = st.querySelector('.step__media');
       gsap.from(fig, { clipPath: 'inset(100% 0% 0% 0%)', duration: 1.6, ease: 'expo.out',
         scrollTrigger: { trigger: st, containerAnimation: h, start: 'left 85%' } });
-      gsap.fromTo(fig.firstElementChild, { xPercent: 7 }, { xPercent: -7, ease: 'none',
+      gsap.fromTo(fig.querySelector('img, video'), { xPercent: 7 }, { xPercent: -7, ease: 'none',
         scrollTrigger: { trigger: st, containerAnimation: h, start: 'left right', end: 'right left', scrub: true } });
       gsap.from(st.querySelector('.step__n'), { x: 60, opacity: 0, duration: 1.3, ease: 'expo.out',
         scrollTrigger: { trigger: st, containerAnimation: h, start: 'left 80%' } });
@@ -779,7 +805,7 @@ function setupScroll() {
   mm.add('(max-width: 900px)', () => {
     document.querySelectorAll('.step__media').forEach((fig) => {
       gsap.from(fig, { clipPath: 'inset(100% 0% 0% 0%)', duration: 1.6, ease: 'expo.out', scrollTrigger: { trigger: fig, start: 'top 85%' } });
-      gsap.fromTo(fig.firstElementChild, { yPercent: 6 }, { yPercent: -6, ease: 'none', scrollTrigger: { trigger: fig, start: 'top bottom', end: 'bottom top', scrub: true } });
+      gsap.fromTo(fig.querySelector('img, video'), { yPercent: 6 }, { yPercent: -6, ease: 'none', scrollTrigger: { trigger: fig, start: 'top bottom', end: 'bottom top', scrub: true } });
     });
   });
 
@@ -936,6 +962,34 @@ async function buildMap() {
     scrollTrigger: { trigger: '.export', start: 'top bottom', end: 'bottom top', scrub: true } });
 }
 
+/* ---------- Телефон: меню-гамбургер и нижняя панель «Позвонить / Запрос» ---------- */
+function setupMobile() {
+  const root = document.documentElement, burger = document.querySelector('.burger'), menu = document.querySelector('.mmenu');
+  const bar = document.querySelector('.mbar');
+  if (!burger || !menu) return;
+  const setMenu = (on) => {
+    root.classList.toggle('is-menu', on);
+    burger.setAttribute('aria-expanded', String(on));
+    menu.setAttribute('aria-hidden', String(!on));
+    if (on) lenis.stop(); else lenis.start();
+  };
+  burger.addEventListener('click', () => setMenu(!root.classList.contains('is-menu')));
+  menu.querySelectorAll('a[href^="#"]').forEach((a) => a.addEventListener('click', (e) => {
+    const t = document.querySelector(a.getAttribute('href'));
+    if (!t) return;
+    e.preventDefault(); e.stopPropagation();
+    setMenu(false);
+    requestAnimationFrame(() => lenis.scrollTo(t, { duration: 1.6 }));
+  }));
+  addEventListener('keydown', (e) => { if (e.key === 'Escape' && root.classList.contains('is-menu')) setMenu(false); });
+  if (!bar) return;
+  const contact = document.querySelector('.contact');
+  lenis.on('scroll', ({ scroll }) => {
+    const r = contact.getBoundingClientRect();
+    bar.classList.toggle('is-on', scroll > innerHeight * 0.8 && r.top > innerHeight * 0.7);
+  });
+}
+
 /* ---------- Свой выпадающий список в стиле сайта (родной select остаётся скрытым и хранит значение) ---------- */
 function enhanceSelect(select) {
   const opts = [...select.options];
@@ -1013,6 +1067,23 @@ function setupBuyers() {
     scrollTrigger: { trigger: '.buyers__grid', start: 'top 85%' } });
   gsap.from(sec.querySelectorAll('.rfq__title, .field, .rfq__foot'), { y: 40, opacity: 0, duration: 1.1, ease: 'expo.out', stagger: 0.05, clearProps: 'transform,opacity',
     scrollTrigger: { trigger: '.rfq', start: 'top 80%' } });
+  // документы: появление и открытие крупно
+  gsap.from(sec.querySelectorAll('.doc'), { y: 70, opacity: 0, rotate: 3, duration: 1.3, ease: 'expo.out', stagger: 0.12, clearProps: 'transform,opacity',
+    scrollTrigger: { trigger: '.docs', start: 'top 85%' } });
+  const modal = document.querySelector('.doc-modal');
+  if (modal) {
+    const slot = modal.querySelector('.doc-modal__slot');
+    const close = () => { modal.classList.remove('is-open'); modal.setAttribute('aria-hidden', 'true'); lenis.start(); };
+    sec.querySelectorAll('.doc').forEach((d) => d.addEventListener('click', () => {
+      slot.innerHTML = '';
+      slot.appendChild(d.querySelector('.doc__paper').cloneNode(true));
+      modal.classList.add('is-open'); modal.setAttribute('aria-hidden', 'false'); lenis.stop();
+      gsap.fromTo(slot, { y: 40, rotate: -3, scale: 0.92 }, { y: 0, rotate: 0, scale: 1, duration: 0.9, ease: 'expo.out' });
+      modal.querySelector('.doc-modal__close').focus({ preventScroll: true });
+    }));
+    modal.addEventListener('click', (e) => { if (e.target === modal || e.target.closest('.doc-modal__close')) close(); });
+    addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
+  }
   const form = sec.querySelector('.rfq');
   form.querySelectorAll('select').forEach(enhanceSelect);
   form.addEventListener('submit', (e) => {
@@ -1090,6 +1161,26 @@ function setupSound() {
     clearTimeout(bubbleTimer);
     if (on) bubble();
   }
+  // всплеск при пересечении поверхности
+  function splash(up) {
+    if (!ctx || !on) return;
+    const t = ctx.currentTime, len = ctx.sampleRate * 1.4;
+    const buf = ctx.createBuffer(1, len, ctx.sampleRate), d = buf.getChannelData(0);
+    for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 2);
+    const src = ctx.createBufferSource(); src.buffer = buf;
+    const bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.Q.value = 0.8;
+    bp.frequency.setValueAtTime(up ? 900 : 3200, t); bp.frequency.exponentialRampToValueAtTime(up ? 3000 : 500, t + 0.9);
+    const g = ctx.createGain(); g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(0.5, t + 0.03); g.gain.exponentialRampToValueAtTime(0.001, t + 1.3);
+    src.connect(bp).connect(g).connect(master); src.start(t); src.stop(t + 1.4);
+    for (let k = 0; k < 5; k++) setTimeout(() => {
+      if (!on) return;
+      const tt = ctx.currentTime, f = 350 + Math.random() * 600, o = ctx.createOscillator(), gg = ctx.createGain();
+      o.frequency.setValueAtTime(f, tt); o.frequency.exponentialRampToValueAtTime(f * 2.4, tt + 0.08);
+      gg.gain.setValueAtTime(0, tt); gg.gain.linearRampToValueAtTime(0.035, tt + 0.01); gg.gain.exponentialRampToValueAtTime(0.0001, tt + 0.12);
+      o.connect(gg).connect(master); o.start(tt); o.stop(tt + 0.14);
+    }, 120 + k * 90 + Math.random() * 60);
+  }
+  addEventListener('bs-surface', (e) => splash(e.detail === 'up'));
   btn.addEventListener('click', () => toggle(!on));
   document.addEventListener('visibilitychange', () => {
     if (!ctx) return;
@@ -1174,6 +1265,7 @@ async function boot() {
   setupCatalogFill();
   setupSound();
   setupBuyers();
+  setupMobile();
   resizeTin();
 
   // пришли по ссылке вида index.html#catalog — сразу к нужному блоку, иначе в начало
