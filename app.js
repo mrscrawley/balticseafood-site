@@ -1,5 +1,10 @@
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { applyI18n, T, tr } from './i18n.js?v=1794922279';
+import { setupTransitions } from './transition.js?v=1794922279';
+
+applyI18n();
+setupTransitions();
 
 /* =========================================================
    Балтийские Морепродукты — сцена, скролл и моушен
@@ -7,6 +12,8 @@ import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
 const isTouch = matchMedia('(hover: none), (pointer: coarse)').matches;
 const isMobile = innerWidth < 900;
+// слабое устройство: телефон или мало памяти/ядер — облегчённая сцена
+const isLow = isMobile || (navigator.deviceMemory || 8) <= 4 || (navigator.hardwareConcurrency || 8) <= 4;
 const lerp = (a, b, t) => a + (b - a) * t;
 const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
 const smooth = (t) => t * t * (3 - 2 * t);
@@ -61,7 +68,8 @@ addEventListener('pointermove', (e) => {
    ========================================================= */
 const seaCanvas = document.getElementById('sea');
 const renderer = new THREE.WebGLRenderer({ canvas: seaCanvas, antialias: !isMobile, powerPreference: 'high-performance' });
-renderer.setPixelRatio(Math.min(devicePixelRatio, isMobile ? 1.25 : 1.75));
+let seaPR = Math.min(devicePixelRatio, isLow ? 1 : 1.6);
+renderer.setPixelRatio(seaPR);
 renderer.setSize(innerWidth, innerHeight);
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 1.0;
@@ -120,7 +128,7 @@ sky.frustumCulled = false;
 scene.add(sky);
 
 // Океан
-const seg = isMobile ? 160 : 256;
+const seg = isLow ? 128 : 256;
 const oceanGeo = new THREE.PlaneGeometry(420, 420, seg, seg);
 oceanGeo.rotateX(-Math.PI / 2);
 const oceanMat = new THREE.ShaderMaterial({
@@ -129,11 +137,27 @@ const oceanMat = new THREE.ShaderMaterial({
     uTime: { value: 0 }, uCam: { value: camera.position }, uSunDir: { value: sunDir },
     uDeep: { value: C.deep }, uShallow: { value: C.shallow }, uSky: { value: C.horizon }, uSkyTop: { value: C.skyTop },
     uSun: { value: C.sun }, uFog: { value: fogColor }, uFogDensity: { value: 0.02 },
+    uRipples: { value: Array.from({ length: 8 }, () => new THREE.Vector4(0, 0, -100, 0)) },
   },
   vertexShader: /* glsl */`
     uniform float uTime;
+    uniform vec4 uRipples[8];   // x, z, время старта, сила
     varying vec3 vWorld;
     varying vec3 vN;
+    // кольца ряби от курсора: бегущая волна с затуханием по расстоянию и времени
+    float ripples(vec2 q){
+      float h = 0.0;
+      for (int i = 0; i < 8; i++) {
+        vec4 r = uRipples[i];
+        float age = uTime - r.z;
+        if (age < 0.0 || age > 4.0) continue;
+        float d = length(q - r.xy);
+        float front = age * 2.6;
+        float env = smoothstep(front + 0.8, front - 0.6, d) * exp(-d * 0.16) * exp(-age * 0.7);
+        h += sin(d * 2.4 - age * 6.5) * env * r.w;
+      }
+      return h * 0.34;
+    }
     vec3 gerstner(vec4 w, vec3 p, inout vec3 T, inout vec3 B){
       float steep = w.z; float k = 6.28318 / w.w; float c = sqrt(9.8 / k);
       vec2 d = normalize(w.xy);
@@ -152,6 +176,12 @@ const oceanMat = new THREE.ShaderMaterial({
       o += gerstner(vec4(0.75, -0.3, 0.10, 5.0), p, T, B);
       o += gerstner(vec4(-0.8, -0.45, 0.07, 2.7), p, T, B);
       o += gerstner(vec4(0.2, 0.9, 0.05, 1.6), p, T, B);
+      // рябь: высота + наклон нормали через конечные разности
+      float e = 0.12;
+      float h0 = ripples(p.xz);
+      T.y += (ripples(p.xz + vec2(e, 0.0)) - h0) / e;
+      B.y += (ripples(p.xz + vec2(0.0, e)) - h0) / e;
+      o.y += h0;
       p += o;
       vN = normalize(cross(B, T));
       vWorld = p;
@@ -193,7 +223,7 @@ ocean.frustumCulled = false;
 scene.add(ocean);
 
 // Подводная взвесь
-const PN = isMobile ? 900 : 2200;
+const PN = isLow ? 700 : 2200;
 const pPos = new Float32Array(PN * 3);
 const pRand = new Float32Array(PN);
 for (let i = 0; i < PN; i++) {
@@ -278,7 +308,7 @@ function fishGeometry() {
   g.computeVertexNormals();
   return g;
 }
-const FN = isMobile ? 70 : 160;
+const FN = isLow ? 60 : 160;
 const fishUniforms = { uTime: { value: 0 } };
 const fishMat = new THREE.MeshStandardMaterial({
   color: '#6f8794', metalness: 0.92, roughness: 0.34, envMap: envTex, envMapIntensity: 0.55,
@@ -303,6 +333,7 @@ const fishData = Array.from({ length: FN }, () => ({
   y: (Math.random() - 0.5) * 3.2,
   wob: Math.random() * Math.PI * 2,
   scale: 0.2 + Math.random() * 0.22,
+  ox: 0, oy: 0, oz: 0,
 }));
 const school = new THREE.Vector3(0, -9, -12);
 const dummy = new THREE.Object3D();
@@ -354,9 +385,9 @@ const clock = new THREE.Clock();
    2. БАНКА КОНСЕРВОВ (отдельная WebGL-сцена)
    ========================================================= */
 const PRODUCTS = [
-  { l1: 'Шпроты', l2: 'в масле', plate: '#0d2233', plate2: '#1a3a52' },
-  { l1: 'Килька', l2: 'в томатном соусе', plate: '#5a1512', plate2: '#86261e' },
-  { l1: 'Печень трески', l2: 'натуральная', plate: '#0f2c27', plate2: '#1d4a40' },
+  { l1: T('Шпроты', 'Sprats'), l2: T('в масле', 'in oil'), plate: '#0d2233', plate2: '#1a3a52' },
+  { l1: T('Килька', 'Sprat'), l2: T('в томатном соусе', 'in tomato sauce'), plate: '#5a1512', plate2: '#86261e' },
+  { l1: T('Печень трески', 'Cod liver'), l2: T('натуральная', 'natural'), plate: '#0f2c27', plate2: '#1d4a40' },
 ];
 
 const tinCanvas = document.getElementById('tin');
@@ -439,13 +470,13 @@ function drawLabel(p) {
   ctx.textBaseline = 'alphabetic';
   if ('letterSpacing' in ctx) ctx.letterSpacing = '10px';
   ctx.font = '500 26px Manrope';
-  ctx.fillText('БАЛТИЙСКИЕ МОРЕПРОДУКТЫ', W / 2, m + 104);
+  ctx.fillText(T('БАЛТИЙСКИЕ МОРЕПРОДУКТЫ', 'BALTIC SEAFOOD'), W / 2, m + 104);
   ctx.font = '500 20px Manrope';
-  ctx.fillText('КАЛИНИНГРАДСКАЯ ОБЛАСТЬ · С 2005', W / 2, H - m - 46);
+  ctx.fillText(T('КАЛИНИНГРАДСКАЯ ОБЛАСТЬ · С 2005', 'KALININGRAD REGION · SINCE 2005'), W / 2, H - m - 46);
   if ('letterSpacing' in ctx) ctx.letterSpacing = '0px';
-  ctx.font = `italic 300 ${p.l1.length > 8 ? 132 : 168}px "Cormorant Garamond"`;
+  ctx.font = `italic 300 ${p.l1.length > 8 ? 132 : 168}px "Baltic Display"`;
   ctx.fillText(p.l1, W / 2, H / 2 + 34);
-  ctx.font = '300 70px "Cormorant Garamond"';
+  ctx.font = '300 70px "Baltic Display"';
   ctx.fillText(p.l2, W / 2, H / 2 + 118);
   labelTex.needsUpdate = true;
 }
@@ -471,11 +502,46 @@ function resizeTin() {
    3. РЕНДЕР-ЦИКЛ
    ========================================================= */
 let seaVisible = true;
+export const seaState = { under: 0, depthT: 0 };   // читает звук
+
+// Луч из камеры через курсор — для ряби и для стаи
+const raycaster = new THREE.Raycaster();
+const ndc = new THREE.Vector2();
+const waterPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
+const schoolPlane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
+const hit = new THREE.Vector3(), cursorFish = new THREE.Vector3();
+let cursorFishActive = false;
+let rippleIdx = 0, lastRipple = { x: 1e9, z: 1e9, t: 0 };
+function addRipple(x, z, t, strength) {
+  oceanMat.uniforms.uRipples.value[rippleIdx].set(x, z, t, strength);
+  rippleIdx = (rippleIdx + 1) % 8;
+}
+let mouseMoved = false;
+addEventListener('pointermove', () => { mouseMoved = true; });
+addEventListener('pointerdown', (e) => {
+  if (seaState.under > 0.5 || e.target.closest('a, button, input, select, textarea')) return;
+  ndc.set((e.clientX / innerWidth) * 2 - 1, -(e.clientY / innerHeight) * 2 + 1);
+  raycaster.setFromCamera(ndc, camera);
+  if (raycaster.ray.intersectPlane(waterPlane, hit)) addRipple(hit.x, hit.z, clock.elapsedTime, 2.2);
+});
+
+// Адаптивное качество: если кадров мало — снижаем разрешение моря
+let frames = 0, fpsTime = 0;
+function adaptQuality(dt) {
+  frames++; fpsTime += dt;
+  if (fpsTime < 2) return;
+  const fps = frames / fpsTime;
+  frames = 0; fpsTime = 0;
+  if (fps < 42 && seaPR > 0.75) { seaPR = Math.max(0.75, seaPR - 0.25); renderer.setPixelRatio(seaPR); renderer.setSize(innerWidth, innerHeight); }
+  else if (fps > 57 && seaPR < Math.min(devicePixelRatio, isLow ? 1 : 1.6)) { seaPR = Math.min(seaPR + 0.25, isLow ? 1 : 1.6); renderer.setPixelRatio(seaPR); renderer.setSize(innerWidth, innerHeight); }
+}
+
 function tick() {
   const dt = Math.min(clock.getDelta(), 0.05);
   const t = clock.elapsedTime;
   mouse.sx = lerp(mouse.sx, mouse.x, 0.05);
   mouse.sy = lerp(mouse.sy, mouse.y, 0.05);
+  if (!document.hidden) adaptQuality(dt);
 
   if (seaVisible) {
     const tg = cameraTarget(lenis.scroll);
@@ -485,6 +551,25 @@ function tick() {
 
     const under = clamp((0.4 - camera.position.y) / 1.2);
     const depthT = clamp((-camera.position.y - 2) / 10);
+    seaState.under = under; seaState.depthT = depthT;
+
+    // курсор над водой → рябь; под водой → точка, от которой шарахается стая
+    if (mouseMoved && !isTouch) {
+      mouseMoved = false;
+      ndc.set(mouse.x, -mouse.y);
+      raycaster.setFromCamera(ndc, camera);
+      if (under < 0.5 && raycaster.ray.intersectPlane(waterPlane, hit)) {
+        const dx = hit.x - lastRipple.x, dz = hit.z - lastRipple.z;
+        if (dx * dx + dz * dz > 2.2 && t - lastRipple.t > 0.09) {
+          addRipple(hit.x, hit.z, t, 1);
+          lastRipple = { x: hit.x, z: hit.z, t };
+        }
+      }
+      if (under > 0.5) {
+        schoolPlane.constant = -school.z;
+        cursorFishActive = !!raycaster.ray.intersectPlane(schoolPlane, cursorFish);
+      }
+    }
     // туман и цвета
     fogColor.copy(C.horizon).lerp(C.underFog, under).lerp(C.abyss, depthT * under * 0.7);
     scene.fog.color.copy(fogColor);
@@ -525,6 +610,21 @@ function tick() {
         const d = fishData[i];
         fishPos(d, t, tmpA);
         fishPos(d, t + 0.05 * Math.sign(d.speed), tmpB);
+        // рыбы расплываются от курсора и плавно возвращаются в стаю
+        let tx = 0, ty = 0, tz = 0;
+        if (cursorFishActive) {
+          const vx = tmpA.x - cursorFish.x, vy = tmpA.y - cursorFish.y, vz = tmpA.z - cursorFish.z;
+          const dist = Math.hypot(vx, vy, vz * 0.5) || 1;
+          const R = 4.2;
+          if (dist < R) {
+            const f = (1 - dist / R) ** 2 * 3.2 / dist;
+            tx = vx * f; ty = vy * f; tz = vz * f * 0.6;
+          }
+        }
+        const k = (tx || ty) ? 0.12 : 0.03;
+        d.ox = lerp(d.ox, tx, k); d.oy = lerp(d.oy, ty, k); d.oz = lerp(d.oz, tz, k);
+        tmpA.x += d.ox; tmpA.y += d.oy; tmpA.z += d.oz;
+        tmpB.x += d.ox * 0.9 + d.ox * 0.4; tmpB.y += d.oy * 1.3; tmpB.z += d.oz;
         dummy.position.copy(tmpA);
         dummy.lookAt(tmpB);
         dummy.scale.setScalar(d.scale);
@@ -618,6 +718,10 @@ function setupScroll() {
   });
   gsap.from('.film__kicker', { opacity: 0, y: 20, duration: 1.2, ease: 'power3.out', scrollTrigger: { trigger: '.film', start: 'top 15%' } });
   gsap.to('.film__text', { opacity: 0, y: -60, ease: 'none', scrollTrigger: { trigger: '.film', start: '72% center', end: 'bottom top', scrub: true } });
+
+  // пока фильм закрывает весь экран, море не рисуем — экономим видеокарту
+  ScrollTrigger.create({ trigger: '.film', start: 'center+=8% center', end: 'bottom bottom',
+    onToggle: (s) => { seaVisible = !s.isActive; } });
 
   // Побережье: кадр раскрывается, фото плывёт
   gsap.fromTo('.coast__frame img', { yPercent: -8, scale: 1.18 }, { yPercent: 8, scale: 1, ease: 'none',
@@ -753,10 +857,10 @@ async function buildMap() {
   // Маршруты из Калининграда
   const home = proj([20.51, 54.71]);
   const dest = [
-    { n: 'Германия', c: [9.99, 53.55], lx: -16, ly: 32, a: 'end' },
-    { n: 'Дания', c: [12.57, 55.68], lx: -16, ly: -18, a: 'end' },
-    { n: 'Франция', c: [2.35, 48.86], lx: -16, ly: 32, a: 'end' },
-    { n: 'Россия', c: [37.62, 55.75], lx: 16, ly: -18, a: 'start' },
+    { n: tr('map.de', 'Германия'), c: [9.99, 53.55], lx: -16, ly: 32, a: 'end' },
+    { n: tr('map.dk', 'Дания'), c: [12.57, 55.68], lx: -16, ly: -18, a: 'end' },
+    { n: tr('map.fr', 'Франция'), c: [2.35, 48.86], lx: -16, ly: 32, a: 'end' },
+    { n: tr('map.ru', 'Россия'), c: [37.62, 55.75], lx: 16, ly: -18, a: 'start' },
   ];
   let routes = '', pts = '';
   dest.forEach((d, k) => {
@@ -770,7 +874,7 @@ async function buildMap() {
       `<text x="${d.lx}" y="${d.ly}" text-anchor="${d.a}">${d.n}</text></g>`;
   });
   pts += `<g class="pt pt--home" transform="translate(${home[0].toFixed(1)} ${home[1].toFixed(1)})">` +
-    `<circle r="30" class="pt__pulse"/><circle r="16" class="pt__ring"/><circle r="6"/><text x="22" y="40">Калининград</text></g>`;
+    `<circle r="30" class="pt__pulse"/><circle r="16" class="pt__ring"/><circle r="6"/><text x="22" y="40">${tr('map.home', 'Калининград')}</text></g>`;
   svg.querySelector('.map__routes').innerHTML = routes;
   svg.querySelector('.map__points').innerHTML = pts;
 
@@ -792,14 +896,110 @@ async function buildMap() {
     scrollTrigger: { trigger: '.export', start: 'top bottom', end: 'bottom top', scrub: true } });
 }
 
+/* ---------- Закупщикам: появление и демо-форма (ничего никуда не отправляет) ---------- */
+function setupBuyers() {
+  const sec = document.querySelector('.buyers');
+  if (!sec) return;
+  gsap.from(sec.querySelectorAll('.buyers__head .mask > span'), { y: 0, yPercent: 115, rotate: 3, duration: 1.5, ease: 'expo.out', stagger: 0.1,
+    scrollTrigger: { trigger: '.buyers__head', start: 'top 80%' } });
+  gsap.from(sec.querySelectorAll('.bcard'), { y: 60, opacity: 0, duration: 1.2, ease: 'expo.out', stagger: 0.1, clearProps: 'transform,opacity',
+    scrollTrigger: { trigger: '.buyers__grid', start: 'top 85%' } });
+  gsap.from(sec.querySelectorAll('.rfq__title, .field, .rfq__foot'), { y: 40, opacity: 0, duration: 1.1, ease: 'expo.out', stagger: 0.05, clearProps: 'transform,opacity',
+    scrollTrigger: { trigger: '.rfq', start: 'top 80%' } });
+  const form = sec.querySelector('.rfq');
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    form.classList.add('is-done');
+    gsap.fromTo(form.querySelector('.rfq__done'), { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' });
+  });
+}
+
+/* ---------- Звук моря: синтез в браузере, без аудиофайлов ---------- */
+function setupSound() {
+  const btn = document.querySelector('.sound');
+  if (!btn) return;
+  let ctx = null, master, surfMix, surfLP, deepGain, bubbleTimer, on = false;
+
+  function brownNoise(seconds) {
+    const len = ctx.sampleRate * seconds, buf = ctx.createBuffer(2, len, ctx.sampleRate);
+    for (let ch = 0; ch < 2; ch++) {
+      const d = buf.getChannelData(ch); let last = 0;
+      for (let i = 0; i < len; i++) { last = (last + 0.02 * (Math.random() * 2 - 1)) / 1.02; d[i] = last * 3.5; }
+    }
+    return buf;
+  }
+  function build() {
+    ctx = new (window.AudioContext || window.webkitAudioContext)();
+    master = ctx.createGain(); master.gain.value = 0; master.connect(ctx.destination);
+    const buf = brownNoise(6);
+    const src = (rate) => { const s = ctx.createBufferSource(); s.buffer = buf; s.loop = true; s.playbackRate.value = rate; return s; };
+    const lfo = (hz, amt, target) => { const o = ctx.createOscillator(); o.frequency.value = hz; const g = ctx.createGain(); g.gain.value = amt; o.connect(g).connect(target); o.start(); };
+
+    // прибой: шум через фильтр, громкость дышит как накат волн
+    surfMix = ctx.createGain(); surfMix.connect(master);
+    surfLP = ctx.createBiquadFilter(); surfLP.type = 'lowpass'; surfLP.frequency.value = 900; surfLP.Q.value = 0.4;
+    const swell = ctx.createGain(); swell.gain.value = 0.5;
+    const s1 = src(1); s1.connect(surfLP).connect(swell).connect(surfMix); s1.start();
+    lfo(0.11, 0.3, swell.gain); lfo(0.043, 0.14, swell.gain);
+    // пена: шипение на высоких
+    const foamBP = ctx.createBiquadFilter(); foamBP.type = 'bandpass'; foamBP.frequency.value = 2400; foamBP.Q.value = 0.6;
+    const foam = ctx.createGain(); foam.gain.value = 0.05;
+    const s2 = src(1.7); s2.connect(foamBP).connect(foam).connect(surfMix); s2.start();
+    lfo(0.11, 0.045, foam.gain);
+    // под водой: глухой гул
+    deepGain = ctx.createGain(); deepGain.gain.value = 0; deepGain.connect(master);
+    const deepLP = ctx.createBiquadFilter(); deepLP.type = 'lowpass'; deepLP.frequency.value = 240;
+    const s3 = src(0.6); s3.connect(deepLP).connect(deepGain); s3.start();
+    const hum = ctx.createOscillator(); hum.frequency.value = 52; const humG = ctx.createGain(); humG.gain.value = 0.035;
+    hum.connect(humG).connect(deepGain); hum.start();
+  }
+  function bubble() {
+    if (!on) return;
+    if (seaState.under > 0.5) {
+      const t = ctx.currentTime, f = 280 + Math.random() * 520;
+      const o = ctx.createOscillator(), g = ctx.createGain();
+      o.frequency.setValueAtTime(f, t); o.frequency.exponentialRampToValueAtTime(f * 2.6, t + 0.09);
+      g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(0.04, t + 0.01); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.13);
+      o.connect(g).connect(master); o.start(t); o.stop(t + 0.16);
+    }
+    bubbleTimer = setTimeout(bubble, 350 + Math.random() * 2200);
+  }
+  // звук следует за глубиной: над водой прибой, под водой гул
+  gsap.ticker.add(() => {
+    if (!ctx || !on) return;
+    const u = seaState.under, t = ctx.currentTime;
+    surfMix.gain.setTargetAtTime(1 - u * 0.85, t, 0.3);
+    surfLP.frequency.setTargetAtTime(lerp(950, 320, u), t, 0.3);
+    deepGain.gain.setTargetAtTime(u * (0.7 + seaState.depthT * 0.4), t, 0.3);
+  });
+  async function toggle(state) {
+    if (!ctx) build();
+    on = state;
+    if (ctx.state === 'suspended') await ctx.resume();
+    master.gain.setTargetAtTime(on ? 0.32 : 0, ctx.currentTime, 0.5);
+    btn.classList.toggle('is-on', on);
+    btn.setAttribute('aria-pressed', String(on));
+    clearTimeout(bubbleTimer);
+    if (on) bubble();
+  }
+  btn.addEventListener('click', () => toggle(!on));
+  document.addEventListener('visibilitychange', () => {
+    if (!ctx) return;
+    if (document.hidden) ctx.suspend(); else if (on) ctx.resume();
+  });
+}
+
 /* ---------- Видео: играют только в кадре ---------- */
 function setupVideos() {
   const io = new IntersectionObserver((entries) => {
     entries.forEach((e) => {
       const v = e.target;
-      if (e.isIntersecting) { v.preload = 'auto'; v.play().catch(() => {}); } else v.pause();
+      if (e.isIntersecting) {
+        if (!v.src) v.src = (isLow && v.dataset.srcM) || v.dataset.src;   // на телефонах лёгкая версия
+        v.play().catch(() => {});
+      } else v.pause();
     });
-  }, { rootMargin: '200px' });
+  }, { rootMargin: '300px' });
   document.querySelectorAll('video').forEach((v) => { v.muted = true; io.observe(v); });
 }
 
@@ -817,13 +1017,14 @@ function setupPreview() {
     pr(clamp((e.clientX - lastX) * 0.6, -12, 12)); lastX = e.clientX;
   });
   let current = null;
-  document.querySelectorAll('.row').forEach((row, i) => {
+  const rowsAll = [...document.querySelectorAll('.row')];
+  rowsAll.forEach((row, i) => {
     row.addEventListener('mouseenter', () => {
       if (current === row) return;
       const prev = current; current = row;
       const img = new Image(); img.src = row.dataset.img; img.alt = '';
       inner.appendChild(img);
-      const dir = prev && [...row.parentNode.children].indexOf(prev) > i ? -1 : 1;
+      const dir = prev && rowsAll.indexOf(prev) > i ? -1 : 1;
       gsap.fromTo(img, { yPercent: 100 * dir, scale: 1.3 }, { yPercent: 0, scale: 1, duration: 0.9, ease: 'expo.out',
         onComplete: () => { while (inner.children.length > 1) inner.firstElementChild.remove(); } });
     });
@@ -867,8 +1068,8 @@ async function boot() {
   // ждём шрифты, но не дольше 1,2 с: экрана загрузки нет, сайт стартует сразу
   await Promise.race([
     Promise.all([
-      document.fonts.load('italic 300 120px "Cormorant Garamond"'),
-      document.fonts.load('300 120px "Cormorant Garamond"'),
+      document.fonts.load('italic 300 120px "Baltic Display"'),
+      document.fonts.load('300 120px "Baltic Display"'),
       document.fonts.load('500 20px Manrope'),
     ]).catch(() => {}),
     new Promise((r) => setTimeout(r, 1200)),
@@ -880,11 +1081,15 @@ async function boot() {
   setupCursor();
   setupVideos();
   setupPreview();
+  setupSound();
+  setupBuyers();
   resizeTin();
 
-  scrollTo(0, 0);
-  lenis.scrollTo(0, { immediate: true, force: true });
+  // пришли по ссылке вида index.html#catalog — сразу к нужному блоку, иначе в начало
+  const hashEl = location.hash && document.querySelector(location.hash);
   lenis.start();
+  if (hashEl) { intro.v = 0; lenis.scrollTo(hashEl, { immediate: true, force: true }); }
+  else { scrollTo(0, 0); lenis.scrollTo(0, { immediate: true, force: true }); }
   const tl = gsap.timeline();
   // y: 0 обязательно: иначе GSAP запоминает стартовый CSS-сдвиг (translateY 120%) как постоянный y
   tl.fromTo('.hero__title .line > span', { y: 0, yPercent: 120, rotate: 5 }, { y: 0, yPercent: 0, rotate: 0, duration: 1.6, ease: 'expo.out', stagger: 0.11 }, 0.15)
