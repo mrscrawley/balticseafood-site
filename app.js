@@ -1,9 +1,9 @@
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
-import { applyI18n, T, tr, LANG } from './i18n.js?v=1794932232';
-import { typograf } from './typo.js?v=1794932232';
-import { setupLiquid } from './liquid.js?v=1794932232';
-import { setupTransitions } from './transition.js?v=1794932232';
+import { applyI18n, T, tr, LANG } from './i18n.js?v=1794932361';
+import { typograf } from './typo.js?v=1794932361';
+import { setupLiquid } from './liquid.js?v=1794932361';
+import { setupTransitions } from './transition.js?v=1794932361';
 
 applyI18n();
 typograf(document.body, LANG);

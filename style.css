@@ -307,7 +307,7 @@ section { position: relative; padding: 0 calc(var(--pad) + 56px) 0 var(--pad); }
     linear-gradient(180deg, rgba(3, 9, 13, 0), rgba(3, 9, 13, .7) 22%, rgba(3, 9, 13, .82) 50%, rgba(3, 9, 13, .7) 78%, rgba(3, 9, 13, 0));
 }
 .products__head { position: relative; z-index: 2; align-self: center; }
-.products__slides { position: relative; height: 340px; }
+.products__slides { position: relative; height: 410px; }
 .pslide { position: absolute; inset: 0; visibility: hidden; }
 .pslide__title { font-family: var(--serif); font-weight: 300; font-size: clamp(54px, 6.4vw, 112px); line-height: .9; letter-spacing: -.03em; }
 .pslide__text { color: var(--muted); max-width: 330px; margin-top: 28px; }
