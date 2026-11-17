@@ -1,9 +1,9 @@
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
-import { applyI18n, T, tr } from './i18n.js?v=1794924754';
-import { setupLiquid } from './liquid.js?v=1794924754';
-import { setupHookCursor } from './cursor.js?v=1794924754';
-import { setupTransitions } from './transition.js?v=1794924754';
+import { applyI18n, T, tr } from './i18n.js?v=1794925004';
+import { setupLiquid } from './liquid.js?v=1794925004';
+import { setupHookCursor } from './cursor.js?v=1794925004';
+import { setupTransitions } from './transition.js?v=1794925004';
 
 applyI18n();
 setupTransitions();
@@ -1159,7 +1159,7 @@ async function boot() {
   setupPreview();
   setupSound();
   setupBuyers();
-  setupLiquid({ hover: ['.step__media'], preview: document.querySelector('.preview__inner') });
+  setupLiquid({ hover: [], preview: document.querySelector('.preview__inner') });
   resizeTin();
 
   // пришли по ссылке вида index.html#catalog — сразу к нужному блоку, иначе в начало
