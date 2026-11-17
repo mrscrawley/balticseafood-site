@@ -44,7 +44,7 @@ ul, ol { list-style: none; }
 ::selection { background: var(--gold); color: var(--ink); }
 
 @media (hover: hover) and (pointer: fine) {
-  body, a, li { cursor: none; }
+  body, a, li, button, input, select, textarea, label { cursor: none; }
 }
 
 /* ---------- Фон: WebGL + слои ---------- */
@@ -80,16 +80,17 @@ main, footer { position: relative; z-index: 2; }
 .loader__caption { font-size: 12px; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); }
 
 /* ---------- Курсор ---------- */
-.cursor { position: fixed; left: 0; top: 0; z-index: 90; pointer-events: none; mix-blend-mode: difference; }
-.cursor i {
-  position: absolute; width: 10px; height: 10px; margin: -5px 0 0 -5px; border-radius: 50%;
-  background: #fff; transition: width .5s var(--ease), height .5s var(--ease), margin .5s var(--ease);
-}
-.cursor.is-hover i { width: 64px; height: 64px; margin: -32px 0 0 -32px; }
-.cursor.has-label i { width: 110px; height: 110px; margin: -55px 0 0 -55px; }
+.cursor { position: fixed; inset: 0; z-index: 90; pointer-events: none; opacity: 0; transition: opacity .4s; }
+.cursor.is-on { opacity: 1; }
+.cursor__svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.cursor__line { fill: none; stroke: rgba(232, 238, 241, .55); stroke-width: .8; }
+.cursor__hook { filter: drop-shadow(0 2px 6px rgba(0, 0, 0, .55)); }
+.cursor__eye, .cursor__bend, .cursor__barb { fill: none; stroke: #e9eef1; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; transition: stroke .35s; }
+.cursor.is-hover .cursor__eye, .cursor.is-hover .cursor__bend, .cursor.is-hover .cursor__barb { stroke: var(--gold-2); }
+.cursor.is-hover .cursor__line { stroke: rgba(240, 220, 174, .7); }
 .cursor__label {
-  position: absolute; transform: translate(-50%, -50%); font-size: 11px; letter-spacing: .14em; text-transform: uppercase;
-  color: #000; white-space: nowrap; opacity: 0; transition: opacity .3s;
+  position: absolute; left: 0; top: 0; padding: 7px 12px; border-radius: 100px; background: rgba(240, 220, 174, .95); color: #05090d;
+  font-size: 11px; letter-spacing: .14em; text-transform: uppercase; white-space: nowrap; opacity: 0; transition: opacity .3s;
 }
 .cursor.has-label .cursor__label { opacity: 1; }
 @media (hover: none), (pointer: coarse) { .cursor { display: none; } }
@@ -242,7 +243,7 @@ section { position: relative; padding: 0 calc(var(--pad) + 56px) 0 var(--pad); }
 /* ---------- Побережье ---------- */
 .coast { padding: 0; height: 130vh; display: flex; align-items: flex-end; overflow: hidden; }
 .coast__frame { position: absolute; inset: 0; margin: 0; overflow: hidden; }
-.coast__frame img {
+.coast__frame img, .coast__frame video {
   position: absolute; left: 0; top: -12%; width: 100%; height: 124%; object-fit: cover; will-change: transform;
   filter: saturate(.5) brightness(.55) contrast(1.12);
 }

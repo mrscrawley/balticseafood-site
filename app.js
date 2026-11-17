@@ -1,7 +1,8 @@
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
-import { applyI18n, T, tr } from './i18n.js?v=1794922279';
-import { setupTransitions } from './transition.js?v=1794922279';
+import { applyI18n, T, tr } from './i18n.js?v=1794922507';
+import { setupHookCursor } from './cursor.js?v=1794922507';
+import { setupTransitions } from './transition.js?v=1794922507';
 
 applyI18n();
 setupTransitions();
@@ -724,7 +725,7 @@ function setupScroll() {
     onToggle: (s) => { seaVisible = !s.isActive; } });
 
   // Побережье: кадр раскрывается, фото плывёт
-  gsap.fromTo('.coast__frame img', { yPercent: -8, scale: 1.18 }, { yPercent: 8, scale: 1, ease: 'none',
+  gsap.fromTo('.coast__frame > *', { yPercent: -8, scale: 1.18 }, { yPercent: 8, scale: 1, ease: 'none',
     scrollTrigger: { trigger: '.coast', start: 'top bottom', end: 'bottom top', scrub: true } });
   gsap.from('.coast__title .mask > span', { yPercent: 115, rotate: 3, duration: 1.5, ease: 'expo.out', stagger: 0.12,
     scrollTrigger: { trigger: '.coast__title', start: 'top 85%' } });
@@ -1036,19 +1037,8 @@ function setupPreview() {
 
 /* ---------- Курсор и магнитные кнопки ---------- */
 function setupCursor() {
+  setupHookCursor();
   if (isTouch) return;
-  const cur = document.querySelector('.cursor');
-  const label = cur.querySelector('.cursor__label');
-  const cx = gsap.quickTo(cur, 'x', { duration: 0.45, ease: 'power3' });
-  const cy = gsap.quickTo(cur, 'y', { duration: 0.45, ease: 'power3' });
-  addEventListener('pointermove', (e) => { cx(e.clientX); cy(e.clientY); });
-  document.querySelectorAll('[data-cursor], a').forEach((el) => {
-    el.addEventListener('mouseenter', () => {
-      const txt = el.dataset.cursor;
-      if (txt) { label.textContent = txt; cur.classList.add('has-label'); } else cur.classList.add('is-hover');
-    });
-    el.addEventListener('mouseleave', () => cur.classList.remove('is-hover', 'has-label'));
-  });
   document.querySelectorAll('.magnetic').forEach((el) => {
     const x = gsap.quickTo(el, 'x', { duration: 0.8, ease: 'elastic.out(1, .4)' });
     const y = gsap.quickTo(el, 'y', { duration: 0.8, ease: 'elastic.out(1, .4)' });

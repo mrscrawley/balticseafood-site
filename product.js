@@ -1,5 +1,6 @@
-import { applyI18n, LANG, tr, PRODUCT_LIST } from './i18n.js?v=1794922279';
-import { setupTransitions } from './transition.js?v=1794922279';
+import { applyI18n, LANG, tr, PRODUCT_LIST } from './i18n.js?v=1794922507';
+import { setupHookCursor } from './cursor.js?v=1794922507';
+import { setupTransitions } from './transition.js?v=1794922507';
 
 /* =========================================================
    Страница продукта (заглушка): данные из PRODUCT_LIST
@@ -55,14 +56,5 @@ gsap.from('.pp-table > div', { opacity: 0, y: 30, duration: 1, ease: 'expo.out',
   scrollTrigger: { trigger: '.pp-table', start: 'top 85%' } });
 gsap.from('.pp-next__name', { yPercent: 40, opacity: 0, duration: 1.4, ease: 'expo.out', scrollTrigger: { trigger: '.pp-next', start: 'top 90%' } });
 
-/* ---------- курсор ---------- */
-if (!matchMedia('(hover: none), (pointer: coarse)').matches) {
-  const cur = document.querySelector('.cursor');
-  const cx = gsap.quickTo(cur, 'x', { duration: 0.45, ease: 'power3' });
-  const cy = gsap.quickTo(cur, 'y', { duration: 0.45, ease: 'power3' });
-  addEventListener('pointermove', (e) => { cx(e.clientX); cy(e.clientY); });
-  document.querySelectorAll('a, [data-cursor]').forEach((el) => {
-    el.addEventListener('mouseenter', () => cur.classList.add('is-hover'));
-    el.addEventListener('mouseleave', () => cur.classList.remove('is-hover'));
-  });
-}
+/* ---------- курсор: крючок на леске ---------- */
+setupHookCursor();
