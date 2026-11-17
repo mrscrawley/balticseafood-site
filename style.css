@@ -491,7 +491,8 @@ section { position: relative; padding: 0 calc(var(--pad) + 56px) 0 var(--pad); }
   color: #05090d; font: inherit; font-size: 14px; letter-spacing: .06em; cursor: pointer; transition: background .5s var(--ease);
 }
 .rfq__submit:hover { background: #fff3d4; }
-.rfq__note { font-size: 13px; color: var(--muted); max-width: 420px; }
+.rfq__note { font-size: 13px; color: var(--muted); white-space: nowrap; }
+@media (max-width: 900px) { .rfq__note { white-space: normal; } }
 .rfq__done { display: none; margin-top: 26px; color: var(--gold-2); font-size: 15px; }
 .rfq.is-done .rfq__done { display: block; }
 
