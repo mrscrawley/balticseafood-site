@@ -1,8 +1,8 @@
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
-import { applyI18n, T, tr } from './i18n.js?v=1794928599';
-import { setupLiquid } from './liquid.js?v=1794928599';
-import { setupTransitions } from './transition.js?v=1794928599';
+import { applyI18n, T, tr } from './i18n.js?v=1794928786';
+import { setupLiquid } from './liquid.js?v=1794928786';
+import { setupTransitions } from './transition.js?v=1794928786';
 
 applyI18n();
 setupTransitions();
@@ -791,25 +791,44 @@ function setupScroll() {
     const prev = tinState.idx;
     tinState.idx = i;
     items.forEach((li, k) => li.classList.toggle('is-active', k === i));
+    const parts = (sl) => ({ masks: sl.querySelectorAll('.mask > span'), rest: sl.querySelectorAll('.pslide__text, .pslide__more') });
+
+    // все слайды, кроме нового, гарантированно убираем (даже при быстрой прокрутке туда-обратно)
+    slides.forEach((sl, k) => {
+      if (k === i) return;
+      const { masks, rest } = parts(sl);
+      gsap.killTweensOf([...masks, ...rest]);
+      if (k === prev) {
+        gsap.to(masks, { y: 0, yPercent: -115, duration: 0.55, ease: 'expo.in', stagger: 0.04 });
+        gsap.to(rest, { opacity: 0, y: -16, duration: 0.35, ease: 'power2.in',
+          onComplete: () => { if (tinState.idx !== k) gsap.set(sl, { visibility: 'hidden' }); } });
+      } else {
+        gsap.set(rest, { opacity: 0 });
+        gsap.set(sl, { visibility: 'hidden' });
+      }
+    });
+
     if (prev >= 0) {
-      const out = slides[prev];
-      gsap.to(out.querySelectorAll('.mask > span'), { yPercent: -115, duration: 0.7, ease: 'expo.in', stagger: 0.05 });
-      gsap.to(out.querySelector('.pslide__text'), { opacity: 0, y: -20, duration: 0.5, onComplete: () => gsap.set(out, { visibility: 'hidden' }) });
-      // банка делает оборот, этикетка меняется на ребре
+      // банка делает оборот; этикетка меняется на ребре и всегда соответствует текущему слайду
       const dir = i > prev ? 1 : -1;
-      const startSpin = tinState.spin;
+      const target = Math.round(tinState.spin / (Math.PI * 2)) * Math.PI * 2 + dir * Math.PI * 2;
       let swapped = false;
       gsap.to(tinState, {
-        spin: startSpin + dir * Math.PI * 2, duration: 1.4, ease: 'expo.inOut',
-        onUpdate() { if (!swapped && this.progress() > 0.35) { swapped = true; drawLabel(PRODUCTS[i]); } },
+        spin: target, duration: 1.4, ease: 'expo.inOut', overwrite: true,
+        onUpdate() { if (!swapped && this.progress() > 0.35) { swapped = true; drawLabel(PRODUCTS[tinState.idx]); } },
+        onComplete: () => drawLabel(PRODUCTS[tinState.idx]),
       });
     } else {
       drawLabel(PRODUCTS[i]);
     }
+
     const inn = slides[i];
+    const { masks, rest } = parts(inn);
+    gsap.killTweensOf([...masks, ...rest]);
     gsap.set(inn, { visibility: 'visible' });
-    gsap.fromTo(inn.querySelectorAll('.mask > span'), { yPercent: 115 }, { yPercent: 0, duration: 1.2, ease: 'expo.out', stagger: 0.08, delay: prev >= 0 ? 0.45 : 0 });
-    gsap.fromTo(inn.querySelector('.pslide__text'), { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 1, ease: 'power3.out', delay: prev >= 0 ? 0.6 : 0.2 });
+    const d = prev >= 0 ? 0.4 : 0;
+    gsap.fromTo(masks, { y: 0, yPercent: 115 }, { y: 0, yPercent: 0, duration: 1.2, ease: 'expo.out', stagger: 0.08, delay: d });
+    gsap.fromTo(rest, { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 1, ease: 'power3.out', stagger: 0.08, delay: d + 0.2 });
   }
   showProduct(0);
 
