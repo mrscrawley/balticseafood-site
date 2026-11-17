@@ -1,9 +1,8 @@
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
-import { applyI18n, T, tr } from './i18n.js?v=1794926758';
-import { setupLiquid } from './liquid.js?v=1794926758';
-import { setupHookCursor } from './cursor.js?v=1794926758';
-import { setupTransitions } from './transition.js?v=1794926758';
+import { applyI18n, T, tr } from './i18n.js?v=1794927099';
+import { setupLiquid } from './liquid.js?v=1794927099';
+import { setupTransitions } from './transition.js?v=1794927099';
 
 applyI18n();
 setupTransitions();
@@ -1090,61 +1089,21 @@ function setupVideos() {
   }
 }
 
-/* ---------- Превью рыбы за курсором в каталоге ---------- */
-function setupPreview() {
+/* ---------- Каталог: фото внутри букв смещается за мышью ---------- */
+function setupCatalogFill() {
   if (isTouch) return;
-  const pv = document.querySelector('.preview');
-  const inner = pv.querySelector('.preview__inner');
-  const px = gsap.quickTo(pv, 'x', { duration: 0.7, ease: 'power3' });
-  const py = gsap.quickTo(pv, 'y', { duration: 0.7, ease: 'power3' });
-  const pr = gsap.quickTo(pv, 'rotation', { duration: 0.9, ease: 'power3' });
-  let lastX = 0;
-  const listEl = document.querySelector('.catalog__list');
-  addEventListener('pointermove', (e) => {
-    // окошко ходит за курсором только в пределах списка — не заезжает на заголовок
-    const lr = listEl.getBoundingClientRect(), half = pv.offsetHeight / 2;
-    const yMin = lr.top + half + 8, yMax = lr.bottom - half - 8;
-    py(yMax > yMin ? Math.min(yMax, Math.max(yMin, e.clientY)) : e.clientY);
-    px(e.clientX);
-    pr(clamp((e.clientX - lastX) * 0.3, -6, 6)); lastX = e.clientX;
-  });
-  let current = null;
-  const rowsAll = [...document.querySelectorAll('.row')];
-  rowsAll.forEach((row, i) => {
-    row.addEventListener('mouseenter', () => {
-      if (current === row) return;
-      gsap.to(pv, { clipPath: 'circle(50% at 50% 50%)', duration: 0.9, ease: 'expo.out', overwrite: true });
-      const prev = current; current = row;
-      const img = new Image(); img.src = row.dataset.img; img.alt = '';
-      // своё приближение для каждого фото: филе крупнее, целая рыба — чтобы не резало хвост
-      const z = parseFloat(row.dataset.zoom || '1'), o = (1 - z) * 50;
-      img.style.cssText = `left:${o}%;top:${o}%;width:${z * 100}%;height:${z * 100}%`;
-      inner.appendChild(img);
-      const dir = prev && rowsAll.indexOf(prev) > i ? -1 : 1;
-      gsap.fromTo(img, { yPercent: 100 * dir, scale: 1.3 }, { yPercent: 0, scale: 1, duration: 0.9, ease: 'expo.out',
-        onComplete: () => { while (inner.children.length > 1) inner.firstElementChild.remove(); } });
+  document.querySelectorAll('.catalog .row').forEach((row) => {
+    const fill = row.querySelector('.fill');
+    if (!fill) return;
+    row.addEventListener('mousemove', (e) => {
+      const r = row.getBoundingClientRect();
+      fill.style.backgroundPosition = `${((e.clientX - r.left) / r.width * 100).toFixed(1)}% ${((e.clientY - r.top) / r.height * 100).toFixed(1)}%`;
     });
   });
-  const list = document.querySelector('.catalog__list');
-  list.addEventListener('mouseenter', () => gsap.to(pv, { clipPath: 'circle(50% at 50% 50%)', duration: 0.9, ease: 'expo.out' }));
-  const hide = (fast) => { current = null; gsap.to(pv, { clipPath: 'circle(0% at 50% 50%)', duration: fast ? 0.25 : 0.6, ease: 'expo.inOut', overwrite: true }); };
-  list.addEventListener('mouseleave', () => hide());
-  // при прокрутке курсор может «уехать» со списка без события мыши — проверяем сами
-  let px0 = -1, py0 = -1;
-  addEventListener('pointermove', (e) => { px0 = e.clientX; py0 = e.clientY; });
-  lenis.on('scroll', () => {
-    if (current === null) return;
-    const el = document.elementFromPoint(px0, py0);
-    if (!el || !el.closest('.catalog__list')) hide(true);
-  });
-  ScrollTrigger.create({ trigger: '.catalog__list', start: 'top bottom', end: 'bottom top', onLeave: () => hide(true), onLeaveBack: () => hide(true) });
-  addEventListener('pageshow', () => hide(true));
-  addEventListener('blur', () => hide(true));
 }
 
 /* ---------- Курсор и магнитные кнопки ---------- */
 function setupCursor() {
-  setupHookCursor();
   if (isTouch) return;
   document.querySelectorAll('.magnetic').forEach((el) => {
     const x = gsap.quickTo(el, 'x', { duration: 0.8, ease: 'elastic.out(1, .4)' });
@@ -1177,7 +1136,7 @@ async function boot() {
   setupScroll();
   setupCursor();
   setupVideos();
-  setupPreview();
+  setupCatalogFill();
   setupSound();
   setupBuyers();
   resizeTin();
