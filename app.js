@@ -1,9 +1,9 @@
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
-import { applyI18n, T, tr } from './i18n.js?v=1794924554';
-import { setupLiquid } from './liquid.js?v=1794924554';
-import { setupHookCursor } from './cursor.js?v=1794924554';
-import { setupTransitions } from './transition.js?v=1794924554';
+import { applyI18n, T, tr } from './i18n.js?v=1794924754';
+import { setupLiquid } from './liquid.js?v=1794924754';
+import { setupHookCursor } from './cursor.js?v=1794924754';
+import { setupTransitions } from './transition.js?v=1794924754';
 
 applyI18n();
 setupTransitions();
@@ -480,9 +480,9 @@ function drawLabel(p) {
   ctx.font = '500 20px Manrope';
   ctx.fillText(T('КАЛИНИНГРАДСКАЯ ОБЛАСТЬ · С 2005', 'KALININGRAD REGION · SINCE 2005', 'REGION KALININGRAD · SEIT 2005'), W / 2, H - m - 46);
   if ('letterSpacing' in ctx) ctx.letterSpacing = '0px';
-  ctx.font = `italic 300 ${p.l1.length > 8 ? 132 : 168}px "Baltic Display"`;
+  ctx.font = `200 ${p.l1.length > 8 ? 118 : 150}px "Baltic Grotesk"`;
   ctx.fillText(p.l1, W / 2, H / 2 + 34);
-  ctx.font = '300 70px "Baltic Display"';
+  ctx.font = '400 60px "Baltic Grotesk"';
   ctx.fillText(p.l2, W / 2, H / 2 + 118);
   labelTex.needsUpdate = true;
 }
@@ -1144,8 +1144,8 @@ async function boot() {
   // ждём шрифты, но не дольше 1,2 с: экрана загрузки нет, сайт стартует сразу
   await Promise.race([
     Promise.all([
-      document.fonts.load('italic 300 120px "Baltic Display"'),
-      document.fonts.load('300 120px "Baltic Display"'),
+      document.fonts.load('200 120px "Baltic Grotesk"'),
+      document.fonts.load('400 120px "Baltic Grotesk"'),
       document.fonts.load('500 20px Manrope'),
     ]).catch(() => {}),
     new Promise((r) => setTimeout(r, 1200)),
