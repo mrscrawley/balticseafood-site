@@ -266,7 +266,7 @@ section { position: relative; padding: 0 calc(var(--pad) + 56px) 0 var(--pad); }
 .products { padding: 0; }
 .products__pin {
   height: 100vh; height: 100svh; position: relative; display: grid;
-  grid-template-columns: 1fr 1.25fr 1fr; align-items: center; padding: 0 var(--pad);
+  grid-template-columns: 1fr 1.25fr 1fr; align-items: center; padding: 0 calc(var(--pad) + 90px) 0 var(--pad);
   background:
     radial-gradient(42% 52% at 50% 52%, rgba(210, 178, 120, .14), transparent 70%),
     linear-gradient(180deg, rgba(3, 9, 13, .55), rgba(3, 9, 13, .82) 50%, rgba(3, 9, 13, .55));
@@ -289,7 +289,7 @@ section { position: relative; padding: 0 calc(var(--pad) + 56px) 0 var(--pad); }
 .products__index li span { color: var(--faint); font-variant-numeric: tabular-nums; transition: color .6s; }
 .products__index li.is-active { color: var(--text); transform: translateX(-12px); }
 .products__index li.is-active span { color: var(--gold); }
-.products__progress { position: absolute; left: var(--pad); right: var(--pad); bottom: 48px; height: 1px; background: var(--faint); }
+.products__progress { position: absolute; left: var(--pad); right: calc(var(--pad) + 90px); bottom: 48px; height: 1px; background: var(--faint); }
 .products__progress i { position: absolute; inset: 0; background: var(--gold); transform-origin: left; transform: scaleX(0); }
 
 /* ---------- Каталог ---------- */
