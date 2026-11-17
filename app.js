@@ -1,8 +1,8 @@
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
-import { applyI18n, T, tr } from './i18n.js?v=1794927325';
-import { setupLiquid } from './liquid.js?v=1794927325';
-import { setupTransitions } from './transition.js?v=1794927325';
+import { applyI18n, T, tr } from './i18n.js?v=1794927516';
+import { setupLiquid } from './liquid.js?v=1794927516';
+import { setupTransitions } from './transition.js?v=1794927516';
 
 applyI18n();
 setupTransitions();
@@ -541,6 +541,23 @@ function adaptQuality(dt) {
   else if (fps > 57 && seaPR < Math.min(devicePixelRatio, isLow ? 1 : 1.6)) { seaPR = Math.min(seaPR + 0.25, isLow ? 1 : 1.6); renderer.setPixelRatio(seaPR); renderer.setSize(innerWidth, innerHeight); }
 }
 
+// Глубиномер: 0 м у поверхности → 459 м (Ландсортская впадина, самая глубокая точка Балтики) → снова 0 у контактов
+const MAX_DEPTH = 459;
+let depthShown = 0, depthLast = -1;
+function updateDepth() {
+  const y = lenis.scroll;
+  let d;
+  if (y < keys.riseStart) d = MAX_DEPTH * Math.pow(clamp(y / keys.riseStart), 0.85);
+  else d = MAX_DEPTH * (1 - smooth(clamp((y - keys.riseStart) / (keys.riseEnd - keys.riseStart))));
+  depthShown += (d - depthShown) * 0.14;
+  const m = Math.round(depthShown);
+  if (m !== depthLast) {
+    depthLast = m;
+    depthEl.textContent = m;
+    depthMark.style.transform = `translateY(${(clamp(depthShown / MAX_DEPTH) * 179).toFixed(1)}px)`;
+  }
+}
+
 function tick() {
   const dt = Math.min(clock.getDelta(), 0.05);
   const t = reduceMotion ? 6 : clock.elapsedTime;
@@ -641,10 +658,9 @@ function tick() {
 
     renderer.render(scene, camera);
 
-    const meters = Math.max(0, Math.round(-camera.position.y * 3.2));
-    depthEl.textContent = meters;
-    depthMark.style.transform = `translateY(${clamp(meters / 40) * 179}px)`;
   }
+
+  updateDepth();
 
   if (tinState.visible) {
     const bob = Math.sin(t * 1.1) * 0.12;
