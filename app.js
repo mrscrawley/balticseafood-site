@@ -645,8 +645,8 @@ function setupScroll() {
         scrollTrigger: { trigger: st, containerAnimation: h, start: 'left 85%' } });
       gsap.fromTo(fig.firstElementChild, { xPercent: 7 }, { xPercent: -7, ease: 'none',
         scrollTrigger: { trigger: st, containerAnimation: h, start: 'left right', end: 'right left', scrub: true } });
-      gsap.from(st.querySelector('.step__n'), { xPercent: 40, ease: 'none',
-        scrollTrigger: { trigger: st, containerAnimation: h, start: 'left right', end: 'right left', scrub: true } });
+      gsap.from(st.querySelector('.step__n'), { x: 60, opacity: 0, duration: 1.3, ease: 'expo.out',
+        scrollTrigger: { trigger: st, containerAnimation: h, start: 'left 80%' } });
       gsap.from([st.querySelector('h3'), st.querySelector('p')], { y: 50, opacity: 0, duration: 1.2, ease: 'expo.out', stagger: 0.1,
         scrollTrigger: { trigger: st, containerAnimation: h, start: 'left 70%' } });
     });
