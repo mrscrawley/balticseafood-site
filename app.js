@@ -1,9 +1,9 @@
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
-import { applyI18n, T, tr, LANG } from './i18n.js?v=1794931459';
-import { typograf } from './typo.js?v=1794931459';
-import { setupLiquid } from './liquid.js?v=1794931459';
-import { setupTransitions } from './transition.js?v=1794931459';
+import { applyI18n, T, tr, LANG } from './i18n.js?v=1794931875';
+import { typograf } from './typo.js?v=1794931875';
+import { setupLiquid } from './liquid.js?v=1794931875';
+import { setupTransitions } from './transition.js?v=1794931875';
 
 applyI18n();
 typograf(document.body, LANG);
@@ -904,7 +904,7 @@ async function buildMap() {
   const ctx = c.getContext('2d', { willReadFrequently: true });
   const gp = d3.geoPath(proj, ctx);
   ctx.fillStyle = '#ffffff'; ctx.beginPath(); gp(countries); ctx.fill();
-  const HL = new Set(['276', '208', '250']); // Германия, Дания, Франция
+  const HL = new Set(['276', '208', '250', '643']); // Германия, Дания, Франция, Россия
   ctx.fillStyle = '#ff0000'; ctx.beginPath();
   gp({ type: 'FeatureCollection', features: countries.features.filter((f) => HL.has(String(f.id))) }); ctx.fill();
   const px = ctx.getImageData(0, 0, W, H).data;
