@@ -1,9 +1,9 @@
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
-import { applyI18n, T, tr } from './i18n.js?v=1794925004';
-import { setupLiquid } from './liquid.js?v=1794925004';
-import { setupHookCursor } from './cursor.js?v=1794925004';
-import { setupTransitions } from './transition.js?v=1794925004';
+import { applyI18n, T, tr } from './i18n.js?v=1794925105';
+import { setupLiquid } from './liquid.js?v=1794925105';
+import { setupHookCursor } from './cursor.js?v=1794925105';
+import { setupTransitions } from './transition.js?v=1794925105';
 
 applyI18n();
 setupTransitions();
@@ -1101,13 +1101,14 @@ function setupPreview() {
   let lastX = 0;
   addEventListener('pointermove', (e) => {
     px(e.clientX); py(e.clientY);
-    pr(clamp((e.clientX - lastX) * 0.6, -12, 12)); lastX = e.clientX;
+    pr(clamp((e.clientX - lastX) * 0.3, -6, 6)); lastX = e.clientX;
   });
   let current = null;
   const rowsAll = [...document.querySelectorAll('.row')];
   rowsAll.forEach((row, i) => {
     row.addEventListener('mouseenter', () => {
       if (current === row) return;
+      gsap.to(pv, { clipPath: 'circle(50% at 50% 50%)', duration: 0.9, ease: 'expo.out', overwrite: true });
       const prev = current; current = row;
       const img = new Image(); img.src = row.dataset.img; img.alt = '';
       inner.appendChild(img);
@@ -1117,8 +1118,20 @@ function setupPreview() {
     });
   });
   const list = document.querySelector('.catalog__list');
-  list.addEventListener('mouseenter', () => gsap.to(pv, { clipPath: 'inset(0% 0% 0% 0%)', duration: 0.8, ease: 'expo.out' }));
-  list.addEventListener('mouseleave', () => { current = null; gsap.to(pv, { clipPath: 'inset(50% 50% 50% 50%)', duration: 0.6, ease: 'expo.inOut' }); });
+  list.addEventListener('mouseenter', () => gsap.to(pv, { clipPath: 'circle(50% at 50% 50%)', duration: 0.9, ease: 'expo.out' }));
+  const hide = (fast) => { current = null; gsap.to(pv, { clipPath: 'circle(0% at 50% 50%)', duration: fast ? 0.25 : 0.6, ease: 'expo.inOut', overwrite: true }); };
+  list.addEventListener('mouseleave', () => hide());
+  // при прокрутке курсор может «уехать» со списка без события мыши — проверяем сами
+  let px0 = -1, py0 = -1;
+  addEventListener('pointermove', (e) => { px0 = e.clientX; py0 = e.clientY; });
+  lenis.on('scroll', () => {
+    if (current === null) return;
+    const el = document.elementFromPoint(px0, py0);
+    if (!el || !el.closest('.catalog__list')) hide(true);
+  });
+  ScrollTrigger.create({ trigger: '.catalog__list', start: 'top bottom', end: 'bottom top', onLeave: () => hide(true), onLeaveBack: () => hide(true) });
+  addEventListener('pageshow', () => hide(true));
+  addEventListener('blur', () => hide(true));
 }
 
 /* ---------- Курсор и магнитные кнопки ---------- */
@@ -1159,7 +1172,6 @@ async function boot() {
   setupPreview();
   setupSound();
   setupBuyers();
-  setupLiquid({ hover: [], preview: document.querySelector('.preview__inner') });
   resizeTin();
 
   // пришли по ссылке вида index.html#catalog — сразу к нужному блоку, иначе в начало
