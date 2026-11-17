@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Лаборатория каталога — Балтийские Морепродукты</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css?v=lab1">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<style>
+body { background: #05090d; }
+.labtop { position: sticky; top: 0; z-index: 50; display: flex; gap: 14px; align-items: center; padding: 18px 4vw; background: rgba(5,9,13,.85); backdrop-filter: blur(14px); border-bottom: 1px solid var(--faint); font-size: 13px; }
+.labtop b { font-weight: 500; letter-spacing: .14em; text-transform: uppercase; font-size: 11px; color: var(--gold); margin-right: auto; }
+.labtop a { padding: 6px 12px; border: 1px solid var(--faint); border-radius: 100px; }
+.labtop a:hover { border-color: var(--gold); }
+.intro { padding: 10vh 4vw 4vh; max-width: 860px; color: var(--muted); line-height: 1.6; }
+.intro h1 { color: var(--text); font-family: var(--serif); font-weight: 200; font-size: 56px; letter-spacing: -.04em; line-height: 1; margin-bottom: 18px; }
+.v { padding: 12vh 4vw 14vh; border-top: 1px solid var(--faint); position: relative; }
+.vmeta { display: flex; gap: 24px; align-items: baseline; margin-bottom: 7vh; }
+.vmeta .l { font-family: var(--serif); font-weight: 200; font-size: 72px; line-height: .8; color: var(--gold-2); }
+.vmeta h2 { font-size: 13px; font-weight: 500; letter-spacing: .18em; text-transform: uppercase; }
+.vmeta p { color: var(--muted); font-size: 14px; max-width: 640px; margin-top: 8px; line-height: 1.55; }
+.nm { font-family: var(--serif); font-weight: 200; letter-spacing: -.05em; line-height: 1; }
+.ty { font-size: 13px; color: var(--muted); letter-spacing: .04em; }
+.ix { font-size: 12px; color: var(--muted); letter-spacing: .12em; }
+.ar { color: var(--gold); font-size: 24px; }
+
+/* ---------- A: иллюминатор в своей колонке ---------- */
+.a-wrap { display: grid; grid-template-columns: 1.35fr 1fr; gap: 5vw; align-items: start; }
+.a-list a { display: grid; grid-template-columns: 50px 1fr auto; gap: 18px; align-items: center; padding: 22px 0; border-bottom: 1px solid var(--faint); }
+.a-list a:first-child { border-top: 1px solid var(--faint); }
+.a-list .nm { font-size: clamp(34px, 3.6vw, 60px); transition: color .5s var(--ease), transform .7s var(--ease); }
+.a-list a.on .nm { color: var(--gold-2); transform: translateX(14px); }
+.a-side { position: sticky; top: 16vh; display: grid; justify-items: center; gap: 26px; }
+.a-port { position: relative; width: min(30vw, 440px); aspect-ratio: 1; border-radius: 50%; overflow: hidden; background: #141b20; }
+.a-port img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.a-port::after { content: ''; position: absolute; inset: 0; border-radius: 50%; border: 1px solid rgba(240,220,174,.6); box-shadow: inset 0 0 0 14px rgba(5,9,13,.35), inset 0 0 0 15px rgba(240,220,174,.2), inset 0 0 60px rgba(0,0,0,.6); }
+.a-cap { text-align: center; } .a-cap .ty { display: block; margin-top: 6px; }
+.a-cap .nm { font-size: 28px; color: var(--gold-2); }
+
+/* ---------- B: строка раскрывается ---------- */
+.b-list a { display: block; border-bottom: 1px solid var(--faint); overflow: hidden; }
+.b-list a:first-child { border-top: 1px solid var(--faint); }
+.b-head { display: grid; grid-template-columns: 50px 1fr auto 40px; gap: 18px; align-items: center; padding: 22px 0; }
+.b-head .nm { font-size: clamp(34px, 3.8vw, 64px); transition: color .5s var(--ease); }
+.b-list a.on .nm { color: var(--gold-2); }
+.b-body { height: 0; display: grid; grid-template-columns: 50px 1fr 1.2fr; gap: 18px; }
+.b-body .ph { grid-column: 3; height: 240px; margin-bottom: 26px; border-radius: 4px; overflow: hidden; }
+.b-body .ph img { width: 100%; height: 100%; object-fit: cover; object-position: center 45%; }
+.b-body .tx { grid-column: 2; color: var(--muted); font-size: 15px; max-width: 360px; padding-top: 4px; }
+
+/* ---------- C: фото — фон строки ---------- */
+.c-list a { position: relative; display: grid; grid-template-columns: 50px 1fr auto 40px; gap: 18px; align-items: center; padding: 30px 28px; border-bottom: 1px solid var(--faint); overflow: hidden; isolation: isolate; }
+.c-list a:first-child { border-top: 1px solid var(--faint); }
+.c-list .bg { position: absolute; inset: 0; z-index: -1; clip-path: inset(50% 0 50% 0); transition: clip-path .8s var(--ease); }
+.c-list .bg img { width: 100%; height: 100%; object-fit: cover; object-position: center 50%; transform: scale(1.15); transition: transform 1.4s var(--ease); filter: brightness(.55) saturate(.85); }
+.c-list .bg::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(5,9,13,.85), rgba(5,9,13,.25) 55%, rgba(5,9,13,.6)); }
+.c-list a.on .bg { clip-path: inset(0 0 0 0); }
+.c-list a.on .bg img { transform: scale(1); }
+.c-list .nm { font-size: clamp(34px, 3.8vw, 64px); transition: color .5s var(--ease), transform .7s var(--ease); }
+.c-list a.on .nm { color: var(--gold-2); transform: translateX(14px); }
+.c-list a.on .ty { color: var(--text); }
+
+/* ---------- D: витрина из иллюминаторов ---------- */
+.d-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5vh 3vw; }
+.d-card { display: grid; justify-items: center; gap: 18px; text-align: center; }
+.d-card .pt { position: relative; width: 100%; max-width: 260px; aspect-ratio: 1; border-radius: 50%; overflow: hidden; transition: transform .8s var(--ease), box-shadow .8s var(--ease); }
+.d-card .pt img { width: 100%; height: 100%; object-fit: cover; transition: transform 1.2s var(--ease); }
+.d-card .pt::after { content: ''; position: absolute; inset: 0; border-radius: 50%; border: 1px solid rgba(240,220,174,.35); box-shadow: inset 0 0 0 10px rgba(5,9,13,.3); transition: border-color .6s; }
+.d-card:hover .pt { transform: translateY(-10px); box-shadow: 0 30px 60px rgba(0,0,0,.5); }
+.d-card:hover .pt img { transform: scale(1.08); }
+.d-card:hover .pt::after { border-color: rgba(240,220,174,.85); }
+.d-card .nm { font-size: 30px; transition: color .5s; } .d-card:hover .nm { color: var(--gold-2); }
+.d-card .ix { display: block; margin-bottom: 4px; }
+.d-card.cta { align-content: center; }
+.d-card.cta .pt { display: grid; place-items: center; background: radial-gradient(circle, rgba(240,220,174,.08), transparent 70%); }
+.d-card.cta .pt span { font-size: 15px; color: var(--gold-2); letter-spacing: .04em; }
+
+/* ---------- E: редакционная панель справа ---------- */
+.e-wrap { display: grid; grid-template-columns: 1.1fr 1fr; gap: 5vw; align-items: stretch; min-height: 80vh; }
+.e-list { display: flex; flex-direction: column; justify-content: center; }
+.e-list a { display: grid; grid-template-columns: 50px 1fr; gap: 18px; align-items: baseline; padding: 12px 0; }
+.e-list .nm { font-size: clamp(36px, 4vw, 66px); color: rgba(232,238,241,.32); transition: color .5s var(--ease); }
+.e-list a.on .nm { color: var(--text); }
+.e-list a.on .ix { color: var(--gold); }
+.e-panel { position: relative; overflow: hidden; border-radius: 4px; min-height: 70vh; background: #0b1218; }
+.e-panel img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.e-panel .meta { position: absolute; left: 28px; right: 28px; bottom: 26px; display: flex; justify-content: space-between; align-items: end; z-index: 2; }
+.e-panel::after { content: ''; position: absolute; inset: 0; background: linear-gradient(0deg, rgba(5,9,13,.75), transparent 45%); }
+.e-panel .meta .nm { font-size: 34px; color: var(--gold-2); }
+
+/* ---------- F: фото внутри букв ---------- */
+.f-list a { display: grid; grid-template-columns: 50px 1fr auto 40px; gap: 18px; align-items: center; padding: 18px 0; border-bottom: 1px solid var(--faint); }
+.f-list a:first-child { border-top: 1px solid var(--faint); }
+.f-list .nm { position: relative; font-family: 'Manrope', sans-serif; font-size: clamp(54px, 7.4vw, 128px); font-weight: 600; letter-spacing: -.06em; line-height: .95; }
+.f-list .nm .t { display: block; transition: opacity .6s var(--ease); }
+.f-list .nm .fill { position: absolute; inset: 0; color: transparent; -webkit-background-clip: text; background-clip: text; background-size: cover; background-position: center; opacity: 0; transition: opacity .6s var(--ease), background-position 3s linear; }
+.f-list a.on .nm .fill { opacity: 1; }
+.f-list a.on .nm .t { opacity: 0; }
+.f-list a.on .ty { color: var(--gold-2); }
+
+@media (max-width: 900px) {
+  .a-wrap, .e-wrap { grid-template-columns: 1fr; }
+  .a-side { position: static; order: -1; } .a-port { width: 70vw; }
+  .d-grid { grid-template-columns: repeat(2, 1fr); }
+  .b-body { grid-template-columns: 1fr; } .b-body .ph, .b-body .tx { grid-column: 1; }
+  .e-panel { min-height: 50vh; order: -1; }
+  .v { padding-left: 16px; padding-right: 16px; }
+}
+</style>
+</head>
+<body>
+<div class="cursor" aria-hidden="true"></div>
+<div class="labtop"><b>Лаборатория каталога</b>
+  <a href="#a">A</a><a href="#b">B</a><a href="#c">C</a><a href="#d">D</a><a href="#e">E</a><a href="#f">F</a><a href="index.html#catalog">← На сайт</a>
+</div>
+
+<div class="intro">
+  <h1>Шесть подач для «Рыбы и филе»</h1>
+  <p>Каждый вариант живой — наведите мышь на строки. Во всех фото больше не перекрывает текст. Напишите букву (или смесь, например «A, но с текстом из B») — поставлю на сайт.</p>
+</div>
+
+<section class="v" id="a">
+  <div class="vmeta"><span class="l">A</span><div><h2>Иллюминатор в своей колонке</h2><p>Список слева, справа неподвижный большой иллюминатор: при наведении в нём меняется рыба, круговой шторкой. Сохраняет вашу идею с окном, но окно больше не летает за курсором.</p></div></div>
+  <div class="a-wrap"><div class="a-list" data-v="a"></div><div class="a-side"><div class="a-port"></div><div class="a-cap"><span class="nm"></span><span class="ty"></span></div></div></div>
+</section>
+
+<section class="v" id="b">
+  <div class="vmeta"><span class="l">B</span><div><h2>Строка раскрывается</h2><p>Под названием плавно открывается полоса с фото и коротким описанием — как аккордеон. Текст всегда на месте, фото появляется рядом с ним.</p></div></div>
+  <div class="b-list" data-v="b"></div>
+</section>
+
+<section class="v" id="c">
+  <div class="vmeta"><span class="l">C</span><div><h2>Фото — фон строки</h2><p>Фото проявляется прямо внутри строки, от центра к краям, затемнённое под текст. Название становится золотым и читается поверх. Самый «журнальный» и плотный вариант.</p></div></div>
+  <div class="c-list" data-v="c"></div>
+</section>
+
+<section class="v" id="d">
+  <div class="vmeta"><span class="l">D</span><div><h2>Витрина иллюминаторов</h2><p>Вместо списка — сетка круглых окон с подписями. Сразу видно весь ассортимент; при наведении окно поднимается, кольцо загорается золотом. Хорошо смотрится и на телефоне.</p></div></div>
+  <div class="d-grid" data-v="d"></div>
+</section>
+
+<section class="v" id="e">
+  <div class="vmeta"><span class="l">E</span><div><h2>Редакционная панель</h2><p>Слева спокойный список, неактивные названия приглушены; справа высокая панель с фото во весь рост, переход с наплывом. Как в каталогах дорогих брендов.</p></div></div>
+  <div class="e-wrap"><div class="e-list" data-v="e"></div><div class="e-panel"><div class="meta"><span class="nm"></span><span class="ty"></span></div></div></div>
+</section>
+
+<section class="v" id="f">
+  <div class="vmeta"><span class="l">F</span><div><h2>Фото внутри букв</h2><p>Без отдельной картинки: при наведении сами буквы наполняются фактурой рыбы и льда. Самый смелый вариант. Чтобы фактура читалась, названия здесь жирнее — Manrope SemiBold.</p></div></div>
+  <div class="f-list" data-v="f"></div>
+</section>
+
+<script type="module">
+import { setupHookCursor } from './cursor.js?v=lab1';
+setupHookCursor();
+
+const ITEMS = [
+  { n: 'Филе трески', t: 'охлаждённое / замороженное', r: 'r-cod-fillet', p: 'p-cod-fillet', s: 'cod-fillet', d: 'Охлаждённое и замороженное филе трески из сырья Балтийского моря.' },
+  { n: 'Филе судака', t: 'охлаждённое / замороженное', r: 'r-zander', p: 'p-zander', s: 'zander-fillet', d: 'Охлаждённое и замороженное филе судака.' },
+  { n: 'Филе окуня', t: 'охлаждённое / замороженное', r: 'r-perch', p: 'p-perch', s: 'perch-fillet', d: 'Охлаждённое и замороженное филе окуня.' },
+  { n: 'Треска', t: 'свежемороженая', r: 'r-cod', p: 'p-cod', s: 'cod', d: 'Свежемороженая балтийская треска.' },
+  { n: 'Камбала', t: 'свежемороженая', r: 'r-flounder', p: 'p-flounder', s: 'flounder', d: 'Свежемороженая балтийская камбала.' },
+  { n: 'Салака', t: 'свежемороженая', r: 'r-herring', p: 'p-herring', s: 'herring', d: 'Свежемороженая салака из Балтийского моря.' },
+  { n: 'Килька', t: 'свежемороженая', r: 'r-sprat', p: 'p-sprat', s: 'sprat', d: 'Свежемороженая балтийская килька.' },
+];
+const img = (f) => `media/${f}.jpg`;
+const href = (it) => `product.html?p=${it.s}`;
+const num = (i) => String(i + 1).padStart(2, '0');
+const $ = (s) => document.querySelector(s);
+const activate = (list, i) => list.querySelectorAll('a').forEach((a, k) => a.classList.toggle('on', k === i));
+
+// A — неподвижный иллюминатор
+{
+  const list = $('[data-v="a"]'), port = $('.a-port'), capN = $('.a-cap .nm'), capT = $('.a-cap .ty');
+  list.innerHTML = ITEMS.map((it, i) => `<a href="${href(it)}"><span class="ix">${num(i)}</span><span class="nm">${it.n}</span><span class="ar">↗</span></a>`).join('');
+  let cur = -1;
+  const show = (i) => {
+    if (i === cur) return; cur = i; activate(list, i);
+    const im = new Image(); im.src = img(ITEMS[i].r); port.appendChild(im);
+    gsap.fromTo(im, { clipPath: 'circle(0% at 50% 50%)', scale: 1.15 }, { clipPath: 'circle(75% at 50% 50%)', scale: 1, duration: 1, ease: 'expo.out',
+      onComplete: () => { while (port.children.length > 1) port.firstElementChild.remove(); } });
+    capN.textContent = ITEMS[i].n; capT.textContent = ITEMS[i].t;
+    gsap.fromTo('.a-cap', { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: .6, ease: 'power3.out' });
+  };
+  list.querySelectorAll('a').forEach((a, i) => a.addEventListener('mouseenter', () => show(i)));
+  show(0);
+}
+
+// B — аккордеон
+{
+  const list = $('[data-v="b"]');
+  list.innerHTML = ITEMS.map((it, i) => `<a href="${href(it)}"><div class="b-head"><span class="ix">${num(i)}</span><span class="nm">${it.n}</span><span class="ty">${it.t}</span><span class="ar">↗</span></div>
+    <div class="b-body"><p class="tx">${it.d}</p><div class="ph"><img src="${img(it.p)}" alt="" loading="lazy"></div></div></a>`).join('');
+  const rows = [...list.querySelectorAll('a')];
+  let cur = -1;
+  const open = (i) => {
+    if (i === cur) return;
+    rows.forEach((r, k) => {
+      const b = r.querySelector('.b-body');
+      gsap.to(b, { height: k === i ? 'auto' : 0, duration: .8, ease: 'expo.inOut', overwrite: true });
+      if (k === i) gsap.fromTo(b.querySelector('img'), { scale: 1.15 }, { scale: 1, duration: 1.4, ease: 'expo.out' });
+    });
+    cur = i; activate(list, i);
+  };
+  rows.forEach((r, i) => r.addEventListener('mouseenter', () => open(i)));
+  open(0);
+}
+
+// C — фото фоном строки
+{
+  const list = $('[data-v="c"]');
+  list.innerHTML = ITEMS.map((it, i) => `<a href="${href(it)}"><span class="bg"><img src="${img(it.p)}" alt="" loading="lazy"></span><span class="ix">${num(i)}</span><span class="nm">${it.n}</span><span class="ty">${it.t}</span><span class="ar">↗</span></a>`).join('');
+  list.querySelectorAll('a').forEach((a, i) => { a.addEventListener('mouseenter', () => activate(list, i)); a.addEventListener('mouseleave', () => a.classList.remove('on')); });
+}
+
+// D — витрина
+{
+  const grid = $('[data-v="d"]');
+  grid.innerHTML = ITEMS.map((it, i) => `<a class="d-card" href="${href(it)}"><span class="pt"><img src="${img(it.r)}" alt="" loading="lazy"></span><span><span class="ix">${num(i)}</span><span class="nm">${it.n}</span><br><span class="ty">${it.t}</span></span></a>`).join('')
+    + `<a class="d-card cta" href="index.html#buyers"><span class="pt"><span>Запросить<br>предложение →</span></span></a>`;
+}
+
+// E — редакционная панель
+{
+  const list = $('[data-v="e"]'), panel = $('.e-panel'), mN = $('.e-panel .meta .nm'), mT = $('.e-panel .meta .ty');
+  list.innerHTML = ITEMS.map((it, i) => `<a href="${href(it)}"><span class="ix">${num(i)}</span><span class="nm">${it.n}</span></a>`).join('');
+  let cur = -1;
+  const show = (i) => {
+    if (i === cur) return; cur = i; activate(list, i);
+    const im = new Image(); im.src = img(ITEMS[i].p); panel.insertBefore(im, panel.querySelector('.meta'));
+    gsap.fromTo(im, { opacity: 0, scale: 1.12 }, { opacity: 1, scale: 1, duration: 1.2, ease: 'expo.out',
+      onComplete: () => { panel.querySelectorAll('img').forEach((x) => { if (x !== im) x.remove(); }); } });
+    mN.textContent = ITEMS[i].n; mT.textContent = ITEMS[i].t;
+  };
+  list.querySelectorAll('a').forEach((a, i) => a.addEventListener('mouseenter', () => show(i)));
+  show(0);
+}
+
+// F — фото внутри букв
+{
+  const list = $('[data-v="f"]');
+  list.innerHTML = ITEMS.map((it, i) => `<a href="${href(it)}"><span class="ix">${num(i)}</span><span class="nm"><span class="t">${it.n}</span><span class="fill" style="background-image:url(${img(it.p)})">${it.n}</span></span><span class="ty">${it.t}</span><span class="ar">↗</span></a>`).join('');
+  list.querySelectorAll('a').forEach((a, i) => {
+    a.addEventListener('mouseenter', () => activate(list, i));
+    a.addEventListener('mouseleave', () => a.classList.remove('on'));
+    a.addEventListener('mousemove', (e) => { const r = a.getBoundingClientRect(); a.querySelector('.fill').style.backgroundPosition = `${(e.clientX - r.left) / r.width * 100}% 50%`; });
+  });
+}
+</script>
+</body>
+</html>

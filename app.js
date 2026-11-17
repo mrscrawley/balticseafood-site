@@ -1,9 +1,9 @@
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
-import { applyI18n, T, tr } from './i18n.js?v=1794926201';
-import { setupLiquid } from './liquid.js?v=1794926201';
-import { setupHookCursor } from './cursor.js?v=1794926201';
-import { setupTransitions } from './transition.js?v=1794926201';
+import { applyI18n, T, tr } from './i18n.js?v=1794926695';
+import { setupLiquid } from './liquid.js?v=1794926695';
+import { setupHookCursor } from './cursor.js?v=1794926695';
+import { setupTransitions } from './transition.js?v=1794926695';
 
 applyI18n();
 setupTransitions();
@@ -730,7 +730,7 @@ function setupScroll() {
     onToggle: (s) => { seaVisible = !s.isActive; } });
 
   // Побережье: кадр раскрывается, фото плывёт
-  gsap.fromTo('.coast__frame > *', { yPercent: -8, scale: 1.18 }, { yPercent: 8, scale: 1, ease: 'none',
+  gsap.fromTo('.coast__frame > *', { yPercent: -5 }, { yPercent: 5, ease: 'none', force3D: true,
     scrollTrigger: { trigger: '.coast', start: 'top bottom', end: 'bottom top', scrub: true } });
   gsap.from('.coast__title .mask > span', { yPercent: 115, rotate: 3, duration: 1.5, ease: 'expo.out', stagger: 0.12,
     scrollTrigger: { trigger: '.coast__title', start: 'top 85%' } });
