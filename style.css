@@ -815,3 +815,10 @@ picture > source { display: none; }
   .step { border-top: 0; border-left: 1px solid var(--faint); padding: 12vh 0 6vh 16px; }
   .step__media { height: 46vh; }
 }
+
+/* Хвосты букв (g, j, у, д) не должны задевать следующую строку */
+.hero__title { line-height: 1.06; }
+.film__title, .pslide__title, .pp-title { line-height: 1; }
+.coast__title { line-height: .98; }
+.contact__title { line-height: .96; }
+.title { line-height: 1; }
