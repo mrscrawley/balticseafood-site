@@ -206,11 +206,11 @@ section { position: relative; padding: 0 calc(var(--pad) + 56px) 0 var(--pad); }
 .process__arrow { font-size: 40px; margin-top: 40px; color: var(--gold); font-weight: 300; }
 .step {
   width: min(36vw, 560px); flex-shrink: 0; border-left: 1px solid var(--faint);
-  padding: 14vh 3.4vw 9vh; display: flex; flex-direction: column; justify-content: flex-end; position: relative;
+  padding: 13vh 3.4vw 8vh; display: flex; flex-direction: column; justify-content: flex-start; position: relative;
   background: linear-gradient(180deg, transparent, rgba(4, 12, 18, .35));
 }
 .step__media {
-  position: relative; width: 100%; height: 46vh; overflow: hidden; margin-bottom: 30px;
+  position: relative; width: 100%; height: 44vh; flex-shrink: 0; overflow: hidden; margin-bottom: 30px;
   clip-path: inset(0 0 0 0); background: #0a141b;
 }
 .step__media img, .step__media video {
@@ -220,7 +220,7 @@ section { position: relative; padding: 0 calc(var(--pad) + 56px) 0 var(--pad); }
 .step__media::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 55%, rgba(4, 10, 14, .55)); }
 .step:last-child { margin-right: 10vw; border-right: 1px solid var(--faint); }
 .step__n {
-  display: flex; align-items: center; gap: 22px; margin-bottom: 26px; pointer-events: none;
+  display: flex; align-items: center; gap: 22px; margin-bottom: 26px; pointer-events: none; flex-shrink: 0;
   font-family: var(--serif); font-weight: 300; font-size: clamp(56px, 5vw, 84px); line-height: .8;
   color: var(--gold-2); letter-spacing: -.03em; font-variant-numeric: lining-nums;
 }

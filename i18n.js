@@ -20,12 +20,12 @@ const EN = {
   'depth.label': 'Depth', 'depth.unit': 'm',
 
   'hero.eyebrow1': 'Kaliningrad region', 'hero.eyebrow2': 'Since 2005',
-  'hero.l1': 'Cold', 'hero.l2': '<em>sea.</em>', 'hero.l3': 'Honest fish.',
+  'hero.l1': 'Twenty years', 'hero.l2': '<em>with one sea.</em>',
   'hero.lead': 'We catch, fillet and can Baltic Sea fish. Our fillets are supplied to Germany, Denmark, France and other EU countries.',
   'hero.hint': 'Scroll to dive in',
 
   'about.label': 'Company',
-  'about.text': 'For twenty years we have worked with one sea. Our raw fish comes from the Baltic and its bays, which is why most of our products are chilled or frozen only once.',
+  'about.text': 'Since 2005 we have worked with the Baltic. Our raw fish comes from the sea and its bays, which is why most of our products are chilled or frozen only once.',
   'stats.1': 'year the company was founded', 'stats.2': 'EU approval number for exports', 'stats.3': 'unified European safety control system', 'stats.4': 'types of packaging in the cannery: glass and tin',
 
   'film.kicker': 'The Baltic Sea · every day since 2005', 'film.l1': 'Freshness', 'film.l2': '<em>begins at sea</em>',
@@ -103,12 +103,12 @@ const DE = {
   'depth.label': 'Tiefe', 'depth.unit': 'm',
 
   'hero.eyebrow1': 'Region Kaliningrad', 'hero.eyebrow2': 'Seit 2005',
-  'hero.l1': 'Kaltes', 'hero.l2': '<em>Meer.</em>', 'hero.l3': 'Ehrlicher Fisch.',
+  'hero.l1': 'Zwanzig Jahre', 'hero.l2': '<em>mit einem Meer.</em>',
   'hero.lead': 'Wir fangen, filetieren und konservieren Fisch aus der Ostsee. Unsere Filets liefern wir nach Deutschland, Dänemark, Frankreich und in weitere EU-Länder.',
   'hero.hint': 'Scrollen, um abzutauchen',
 
   'about.label': 'Unternehmen',
-  'about.text': 'Seit zwanzig Jahren arbeiten wir mit einem Meer. Unser Rohfisch stammt aus der Ostsee und ihren Buchten – deshalb sind unsere Produkte überwiegend frisch gekühlt oder nur einmal gefroren.',
+  'about.text': 'Seit 2005 arbeiten wir mit der Ostsee. Unser Rohfisch stammt aus dem Meer und seinen Buchten – deshalb sind unsere Produkte überwiegend frisch gekühlt oder nur einmal gefroren.',
   'stats.1': 'Gründungsjahr des Unternehmens', 'stats.2': 'EU-Zulassungsnummer für Lieferungen in die EU', 'stats.3': 'einheitliches europäisches Kontrollsystem', 'stats.4': 'Verpackungsarten in der Konservenfabrik: Glas und Dose',
 
   'film.kicker': 'Die Ostsee · jeden Tag seit 2005', 'film.l1': 'Frische', 'film.l2': '<em>beginnt auf See</em>',
