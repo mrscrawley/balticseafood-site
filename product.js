@@ -1,7 +1,7 @@
-import { applyI18n, LI, LANG, tr, PRODUCT_LIST } from './i18n.js?v=1794929351';
-import { typograf } from './typo.js?v=1794929351';
-import { setupLiquid } from './liquid.js?v=1794929351';
-import { setupTransitions } from './transition.js?v=1794929351';
+import { applyI18n, LI, LANG, tr, PRODUCT_LIST } from './i18n.js?v=1794931340';
+import { typograf } from './typo.js?v=1794931340';
+import { setupLiquid } from './liquid.js?v=1794931340';
+import { setupTransitions } from './transition.js?v=1794931340';
 
 /* =========================================================
    Страница продукта (заглушка): данные из PRODUCT_LIST

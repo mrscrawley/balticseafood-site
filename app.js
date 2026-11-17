@@ -1,9 +1,9 @@
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
-import { applyI18n, T, tr, LANG } from './i18n.js?v=1794929351';
-import { typograf } from './typo.js?v=1794929351';
-import { setupLiquid } from './liquid.js?v=1794929351';
-import { setupTransitions } from './transition.js?v=1794929351';
+import { applyI18n, T, tr, LANG } from './i18n.js?v=1794931340';
+import { typograf } from './typo.js?v=1794931340';
+import { setupLiquid } from './liquid.js?v=1794931340';
+import { setupTransitions } from './transition.js?v=1794931340';
 
 applyI18n();
 typograf(document.body, LANG);
@@ -370,8 +370,9 @@ function computeKeys() {
   keys.dive = innerHeight * 1.05;
   const contact = document.querySelector('.contact');
   const top = contact.getBoundingClientRect().top + (lenis.scroll || scrollY);
-  keys.riseEnd = Math.max(top + 10, lenis.limit || document.documentElement.scrollHeight - innerHeight);
-  keys.riseStart = Math.max(keys.dive + 10, top - innerHeight * 1.3);
+  // к началу «Контактов» мы уже на поверхности
+  keys.riseEnd = Math.max(keys.dive + 20, top - innerHeight * 0.35);
+  keys.riseStart = Math.max(keys.dive + 10, keys.riseEnd - innerHeight * 1.6);
 }
 ScrollTrigger.addEventListener('refresh', computeKeys);
 
@@ -840,7 +841,7 @@ function setupScroll() {
       const target = Math.round(tinState.spin / (Math.PI * 2)) * Math.PI * 2 + dir * Math.PI * 2;
       let swapped = false;
       gsap.to(tinState, {
-        spin: target, duration: 1.4, ease: 'expo.inOut', overwrite: true,
+        spin: target, duration: 1.4, ease: 'expo.inOut', overwrite: 'auto',
         onUpdate() { if (!swapped && this.progress() > 0.35) { swapped = true; drawLabel(PRODUCTS[tinState.idx]); } },
         onComplete: () => drawLabel(PRODUCTS[tinState.idx]),
       });
