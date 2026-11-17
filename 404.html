@@ -150,9 +150,9 @@ h1 em { color: var(--gold-2); font-style: normal; }
 <div class="depth" aria-hidden="true"><span class="v" data-i18n="depth.label">Глубина</span><div class="bar"><i></i></div><b><span id="d">0</span> <span data-i18n="depth.unit">м</span></b></div>
 
 <script type="module">
-import { applyI18n, LANG } from './i18n.js?v=1794931340';
-import { typograf } from './typo.js?v=1794931340';
-import { setupTransitions } from './transition.js?v=1794931340';
+import { applyI18n, LANG } from './i18n.js?v=1794931459';
+import { typograf } from './typo.js?v=1794931459';
+import { setupTransitions } from './transition.js?v=1794931459';
 applyI18n();
 typograf(document.body, LANG);
 document.querySelectorAll('.lang a').forEach((a) => { a.href = `index.html?lang=${a.dataset.lang}`; });
@@ -179,7 +179,7 @@ const tl = gsap.timeline({ delay: 0.2 });
 tl.from('.num', { opacity: 0, scale: 1.08, duration: 2.2, ease: 'expo.out' })
   .from('.line', { scaleY: 0, duration: 1.6, ease: 'expo.inOut' }, 0.3)
   .from('.hook', { opacity: 0, y: -40, duration: 1.2, ease: 'expo.out' }, 1.2)
-  .fromTo('h1 .mask > span', { y: 0, yPercent: 115 }, { y: 0, yPercent: 0, duration: 1.5, ease: 'expo.out', stagger: 0.1 }, 0.5)
+  .fromTo('h1 .mask > span', { y: 0, yPercent: 140 }, { y: 0, yPercent: 0, duration: 1.5, ease: 'expo.out', stagger: 0.1 }, 0.5)
   .from('.kicker, .text, .btns, .top, .depth', { opacity: 0, y: 20, duration: 1.1, ease: 'power3.out', stagger: 0.07 }, 0.8);
 
 // глубиномер «погружается» до 404 м

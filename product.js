@@ -1,7 +1,7 @@
-import { applyI18n, LI, LANG, tr, PRODUCT_LIST } from './i18n.js?v=1794931340';
-import { typograf } from './typo.js?v=1794931340';
-import { setupLiquid } from './liquid.js?v=1794931340';
-import { setupTransitions } from './transition.js?v=1794931340';
+import { applyI18n, LI, LANG, tr, PRODUCT_LIST } from './i18n.js?v=1794931459';
+import { typograf } from './typo.js?v=1794931459';
+import { setupLiquid } from './liquid.js?v=1794931459';
+import { setupTransitions } from './transition.js?v=1794931459';
 
 /* =========================================================
    Страница продукта (заглушка): данные из PRODUCT_LIST
@@ -48,7 +48,7 @@ lenis.on('scroll', ({ scroll }) => nav.classList.toggle('is-scrolled', scroll > 
 setupTransitions();
 
 const tl = gsap.timeline({ delay: 0.35 });
-tl.fromTo('.pp-title .mask > span', { y: 0, yPercent: 115, rotate: 3 }, { y: 0, yPercent: 0, rotate: 0, duration: 1.6, ease: 'expo.out', stagger: 0.1 })
+tl.fromTo('.pp-title .mask > span', { y: 0, yPercent: 140, rotate: 3 }, { y: 0, yPercent: 0, rotate: 0, duration: 1.6, ease: 'expo.out', stagger: 0.1 })
   .from('.pp-back, .pp-type, .pp-lead, .pp-cta', { opacity: 0, y: 24, duration: 1.1, ease: 'power3.out', stagger: 0.07 }, 0.2)
   .fromTo('.pp-media', { clipPath: 'inset(100% 0% 0% 0%)' }, { clipPath: 'inset(0% 0% 0% 0%)', duration: 1.6, ease: 'expo.inOut' }, 0)
   .from('.pp-media img, .pp-media .pp-media__soon', { scale: 1.25, duration: 2, ease: 'expo.out' }, 0.2);

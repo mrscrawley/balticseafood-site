@@ -1,9 +1,9 @@
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
-import { applyI18n, T, tr, LANG } from './i18n.js?v=1794931340';
-import { typograf } from './typo.js?v=1794931340';
-import { setupLiquid } from './liquid.js?v=1794931340';
-import { setupTransitions } from './transition.js?v=1794931340';
+import { applyI18n, T, tr, LANG } from './i18n.js?v=1794931459';
+import { typograf } from './typo.js?v=1794931459';
+import { setupLiquid } from './liquid.js?v=1794931459';
+import { setupTransitions } from './transition.js?v=1794931459';
 
 applyI18n();
 typograf(document.body, LANG);
@@ -734,7 +734,7 @@ function setupScroll() {
   // Заголовки-маски
   document.querySelectorAll('.catalog .title, .export .title, .contact__title, .process .title').forEach((h) => {
     gsap.from(h.querySelectorAll('.mask > span'), {
-      yPercent: 115, rotate: 3, duration: 1.4, ease: 'expo.out', stagger: 0.1,
+      yPercent: 140, rotate: 3, duration: 1.4, ease: 'expo.out', stagger: 0.1,
       scrollTrigger: { trigger: h, start: 'top 85%' },
     });
   });
@@ -761,7 +761,7 @@ function setupScroll() {
     .fromTo(frame, { '--iy': '30%', '--ix': isMobile ? '18%' : '34%', '--r': '18px', '--fs': 1.3 },
       { '--iy': '0%', '--ix': '0%', '--r': '0px', '--fs': 1, ease: 'power2.inOut' });
   gsap.from('.film__title .mask > span', {
-    yPercent: 115, rotate: 3, duration: 1.5, ease: 'expo.out', stagger: 0.12,
+    yPercent: 140, rotate: 3, duration: 1.5, ease: 'expo.out', stagger: 0.12,
     scrollTrigger: { trigger: '.film', start: 'top 15%' },
   });
   gsap.from('.film__kicker', { opacity: 0, y: 20, duration: 1.2, ease: 'power3.out', scrollTrigger: { trigger: '.film', start: 'top 15%' } });
@@ -774,7 +774,7 @@ function setupScroll() {
   // Побережье: кадр раскрывается, фото плывёт
   gsap.fromTo('.coast__frame > *', { yPercent: -5 }, { yPercent: 5, ease: 'none', force3D: true,
     scrollTrigger: { trigger: '.coast', start: 'top bottom', end: 'bottom top', scrub: true } });
-  gsap.from('.coast__title .mask > span', { yPercent: 115, rotate: 3, duration: 1.5, ease: 'expo.out', stagger: 0.12,
+  gsap.from('.coast__title .mask > span', { yPercent: 140, rotate: 3, duration: 1.5, ease: 'expo.out', stagger: 0.12,
     scrollTrigger: { trigger: '.coast__title', start: 'top 85%' } });
   gsap.from('.coast__caption, .coast .label', { opacity: 0, y: 30, duration: 1.2, ease: 'power3.out', stagger: 0.1,
     scrollTrigger: { trigger: '.coast__title', start: 'top 80%' } });
@@ -854,7 +854,7 @@ function setupScroll() {
     gsap.killTweensOf([...masks, ...rest]);
     gsap.set(inn, { visibility: 'visible' });
     const d = prev >= 0 ? 0.4 : 0;
-    gsap.fromTo(masks, { y: 0, yPercent: 115 }, { y: 0, yPercent: 0, duration: 1.2, ease: 'expo.out', stagger: 0.08, delay: d });
+    gsap.fromTo(masks, { y: 0, yPercent: 140 }, { y: 0, yPercent: 0, duration: 1.2, ease: 'expo.out', stagger: 0.08, delay: d });
     gsap.fromTo(rest, { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 1, ease: 'power3.out', stagger: 0.08, delay: d + 0.2 });
   }
   showProduct(0);
@@ -1062,7 +1062,7 @@ function enhanceSelect(select) {
 function setupBuyers() {
   const sec = document.querySelector('.buyers');
   if (!sec) return;
-  gsap.from(sec.querySelectorAll('.buyers__head .mask > span'), { y: 0, yPercent: 115, rotate: 3, duration: 1.5, ease: 'expo.out', stagger: 0.1,
+  gsap.from(sec.querySelectorAll('.buyers__head .mask > span'), { y: 0, yPercent: 140, rotate: 3, duration: 1.5, ease: 'expo.out', stagger: 0.1,
     scrollTrigger: { trigger: '.buyers__head', start: 'top 80%' } });
   gsap.from(sec.querySelectorAll('.bcard'), { y: 60, opacity: 0, duration: 1.2, ease: 'expo.out', stagger: 0.1, clearProps: 'transform,opacity',
     scrollTrigger: { trigger: '.buyers__grid', start: 'top 85%' } });
@@ -1276,7 +1276,7 @@ async function boot() {
   else { scrollTo(0, 0); lenis.scrollTo(0, { immediate: true, force: true }); }
   const tl = gsap.timeline();
   // y: 0 обязательно: иначе GSAP запоминает стартовый CSS-сдвиг (translateY 120%) как постоянный y
-  tl.fromTo('.hero__title .line > span', { y: 0, yPercent: 120, rotate: 5 }, { y: 0, yPercent: 0, rotate: 0, duration: 1.6, ease: 'expo.out', stagger: 0.11 }, 0.15)
+  tl.fromTo('.hero__title .line > span', { y: 0, yPercent: 145, rotate: 5 }, { y: 0, yPercent: 0, rotate: 0, duration: 1.6, ease: 'expo.out', stagger: 0.11 }, 0.15)
     .fromTo('.nav, .hero__eyebrow, .hero__lead, .scroll-hint, .depth', { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 1.2, ease: 'power3.out', stagger: 0.06, clearProps: 'transform' }, 0.4)
     .to(intro, { v: 0, duration: 2.8, ease: 'expo.out' }, 0);
   document.body.classList.remove('is-loading');
