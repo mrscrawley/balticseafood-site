@@ -1,8 +1,8 @@
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
-import { applyI18n, T, tr } from './i18n.js?v=1794922654';
-import { setupHookCursor } from './cursor.js?v=1794922654';
-import { setupTransitions } from './transition.js?v=1794922654';
+import { applyI18n, T, tr } from './i18n.js?v=1794923498';
+import { setupHookCursor } from './cursor.js?v=1794923498';
+import { setupTransitions } from './transition.js?v=1794923498';
 
 applyI18n();
 setupTransitions();
@@ -897,6 +897,73 @@ async function buildMap() {
     scrollTrigger: { trigger: '.export', start: 'top bottom', end: 'bottom top', scrub: true } });
 }
 
+/* ---------- Свой выпадающий список в стиле сайта (родной select остаётся скрытым и хранит значение) ---------- */
+function enhanceSelect(select) {
+  const opts = [...select.options];
+  const wrap = document.createElement('div');
+  wrap.className = 'dd';
+  const id = 'dd-' + Math.random().toString(36).slice(2, 7);
+  wrap.innerHTML = `
+    <button type="button" class="dd__btn" aria-haspopup="listbox" aria-expanded="false" aria-controls="${id}" data-cursor>
+      <span class="dd__value"></span><i class="dd__chev" aria-hidden="true"></i>
+    </button>
+    <ul class="dd__list" id="${id}" role="listbox" tabindex="-1" data-lenis-prevent>
+      ${opts.map((o, i) => `<li class="dd__opt${i === 0 ? ' is-placeholder' : ''}" role="option" data-i="${i}" aria-selected="${o.selected}"><span>${o.textContent}</span></li>`).join('')}
+    </ul>`;
+  select.classList.add('dd__native');
+  select.tabIndex = -1;
+  select.setAttribute('aria-hidden', 'true');
+  select.after(wrap);
+  const btn = wrap.querySelector('.dd__btn'), list = wrap.querySelector('.dd__list'), val = wrap.querySelector('.dd__value');
+  const items = [...list.children];
+  let open = false, active = select.selectedIndex;
+
+  function render() {
+    val.textContent = opts[select.selectedIndex].textContent;
+    wrap.classList.toggle('is-empty', select.selectedIndex === 0);
+    items.forEach((li, i) => {
+      li.setAttribute('aria-selected', String(i === select.selectedIndex));
+      li.classList.toggle('is-active', i === active);
+    });
+  }
+  function setOpen(state) {
+    if (open === state) return;
+    open = state;
+    wrap.classList.toggle('is-open', open);
+    btn.setAttribute('aria-expanded', String(open));
+    if (open) {
+      active = Math.max(select.selectedIndex, 0); render();
+      gsap.fromTo(list, { clipPath: 'inset(0% 0% 100% 0%)', y: -8 }, { clipPath: 'inset(0% 0% 0% 0%)', y: 0, duration: 0.55, ease: 'expo.out' });
+      gsap.fromTo(items, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.5, ease: 'expo.out', stagger: 0.025 });
+      list.focus({ preventScroll: true });
+    } else {
+      gsap.to(list, { clipPath: 'inset(0% 0% 100% 0%)', duration: 0.35, ease: 'expo.in' });
+    }
+  }
+  function choose(i) {
+    select.selectedIndex = i;
+    select.dispatchEvent(new Event('change', { bubbles: true }));
+    render(); setOpen(false); btn.focus({ preventScroll: true });
+  }
+  btn.addEventListener('click', () => setOpen(!open));
+  items.forEach((li, i) => {
+    li.addEventListener('click', () => choose(i));
+    li.addEventListener('pointerenter', () => { active = i; render(); });
+  });
+  list.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+      e.preventDefault();
+      active = (active + (e.key === 'ArrowDown' ? 1 : -1) + items.length) % items.length;
+      render(); items[active].scrollIntoView({ block: 'nearest' });
+    } else if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); choose(active); }
+    else if (e.key === 'Escape' || e.key === 'Tab') { setOpen(false); if (e.key === 'Escape') btn.focus(); }
+  });
+  btn.addEventListener('keydown', (e) => { if (e.key === 'ArrowDown') { e.preventDefault(); setOpen(true); } });
+  document.addEventListener('pointerdown', (e) => { if (open && !wrap.contains(e.target)) setOpen(false); });
+  gsap.set(list, { clipPath: 'inset(0% 0% 100% 0%)' });
+  render();
+}
+
 /* ---------- Закупщикам: появление и демо-форма (ничего никуда не отправляет) ---------- */
 function setupBuyers() {
   const sec = document.querySelector('.buyers');
@@ -908,6 +975,7 @@ function setupBuyers() {
   gsap.from(sec.querySelectorAll('.rfq__title, .field, .rfq__foot'), { y: 40, opacity: 0, duration: 1.1, ease: 'expo.out', stagger: 0.05, clearProps: 'transform,opacity',
     scrollTrigger: { trigger: '.rfq', start: 'top 80%' } });
   const form = sec.querySelector('.rfq');
+  form.querySelectorAll('select').forEach(enhanceSelect);
   form.addEventListener('submit', (e) => {
     e.preventDefault();
     form.classList.add('is-done');

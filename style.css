@@ -466,6 +466,43 @@ section { position: relative; padding: 0 calc(var(--pad) + 56px) 0 var(--pad); }
 .rfq__done { display: none; margin-top: 26px; color: var(--gold-2); font-size: 15px; }
 .rfq.is-done .rfq__done { display: block; }
 
+
+/* ---------- Свой выпадающий список ---------- */
+.dd__native { display: none !important; }
+.dd { position: relative; }
+.dd__btn {
+  width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 14px;
+  background: transparent; border: 0; border-bottom: 1px solid rgba(232, 238, 241, .22); color: var(--text);
+  font: inherit; font-size: 17px; padding: 10px 0 12px; text-align: left; transition: border-color .4s;
+}
+.dd.is-empty .dd__value { color: rgba(232, 238, 241, .55); }
+.dd__btn:focus-visible, .dd.is-open .dd__btn { outline: none; border-bottom-color: var(--gold); }
+.dd__chev { width: 9px; height: 9px; border-right: 1px solid var(--gold); border-bottom: 1px solid var(--gold); transform: translateY(-3px) rotate(45deg); transition: transform .5s var(--ease); flex-shrink: 0; }
+.dd.is-open .dd__chev { transform: translateY(2px) rotate(-135deg); }
+.dd__list {
+  position: absolute; left: -14px; right: -14px; top: calc(100% + 10px); z-index: 40; list-style: none; margin: 0;
+  padding: 10px; max-height: 360px; overflow-y: auto; outline: none; visibility: hidden;
+  background: rgba(8, 15, 20, .86); border: 1px solid rgba(210, 178, 120, .28); border-radius: 18px;
+  -webkit-backdrop-filter: blur(22px) saturate(140%); backdrop-filter: blur(22px) saturate(140%);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, .55);
+  scrollbar-width: thin; scrollbar-color: rgba(210, 178, 120, .4) transparent;
+}
+.dd.is-open .dd__list { visibility: visible; }
+.dd__opt {
+  position: relative; display: flex; align-items: center; padding: 11px 14px 11px 34px; border-radius: 10px;
+  font-size: 15px; color: rgba(232, 238, 241, .78); transition: background .3s, color .3s;
+}
+.dd__opt.is-placeholder { color: rgba(232, 238, 241, .4); font-size: 13px; letter-spacing: .06em; }
+.dd__opt.is-active { background: rgba(240, 220, 174, .1); color: var(--text); }
+.dd__opt[aria-selected="true"] { color: var(--gold-2); }
+.dd__opt[aria-selected="true"]::before {
+  content: ''; position: absolute; left: 14px; top: 50%; width: 7px; height: 7px; margin-top: -3.5px;
+  border-radius: 50%; background: var(--gold); box-shadow: 0 0 10px rgba(210, 178, 120, .7);
+}
+.field .dd__opt span, .field .dd__value { font-size: inherit; letter-spacing: normal; text-transform: none; color: inherit; }
+.dd__opt span { transition: transform .4s var(--ease); }
+.dd__opt.is-active span { transform: translateX(4px); }
+
 /* ---------- Переход между страницами ---------- */
 .curtain {
   position: fixed; inset: 0; z-index: 120; background: #04080c; display: grid; place-items: center;
