@@ -1,6 +1,6 @@
-import { applyI18n, LANG, tr, PRODUCT_LIST } from './i18n.js?v=1794922507';
-import { setupHookCursor } from './cursor.js?v=1794922507';
-import { setupTransitions } from './transition.js?v=1794922507';
+import { applyI18n, LANG, tr, PRODUCT_LIST } from './i18n.js?v=1794922654';
+import { setupHookCursor } from './cursor.js?v=1794922654';
+import { setupTransitions } from './transition.js?v=1794922654';
 
 /* =========================================================
    Страница продукта (заглушка): данные из PRODUCT_LIST

@@ -313,7 +313,7 @@ section { position: relative; padding: 0 calc(var(--pad) + 56px) 0 var(--pad); }
 .catalog__list { border-top: 1px solid var(--faint); }
 .row {
   position: relative; display: grid; grid-template-columns: 70px 1fr auto 60px; align-items: center;
-  gap: 24px; padding: 30px 0; border-bottom: 1px solid var(--faint); overflow: hidden;
+  gap: 24px; padding: 30px clamp(20px, 2.4vw, 36px); border-bottom: 1px solid var(--faint); overflow: hidden;
 }
 .row::before {
   content: ''; position: absolute; inset: 0; background: var(--text); transform: scaleY(0); transform-origin: bottom;
@@ -579,7 +579,7 @@ html.is-arriving .curtain__mark { opacity: 1; }
   .products__index li span { font-size: 13px; }
   .products__index li.is-active { transform: none; }
   .products__progress { bottom: 40px; left: 16px; right: 16px; }
-  .row { gap: 12px; padding: 18px 0; }
+  .row { gap: 12px; padding: 18px 14px; }
   .row__type { display: none; }
   .export { flex-direction: column; align-items: stretch; min-height: auto; }
   .export::before { background: linear-gradient(180deg, var(--ink) 0%, transparent 15%, transparent 85%, var(--ink) 100%); }
