@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Балтийские Морепродукты — рыба Балтийского моря с 2005 года</title>
+<meta name="description" content="Промышленное рыболовство, разделка и консервы. Филе трески, судака, окуня, шпроты, килька, печень трески. Еврономер 68N, HACCP. Калининградская область.">
+<meta name="theme-color" content="#05090d">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Manrope:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+} }
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
+</head>
+<body class="is-loading">
+
+<!-- Прелоадер -->
+<div class="loader" aria-hidden="true">
+  <div class="loader__top">
+    <span>Балтийские Морепродукты</span>
+    <span>54°40′ N · 20°08′ E</span>
+  </div>
+  <div class="loader__count"><span id="count">0</span><sup>%</sup></div>
+  <div class="loader__bar"><i></i></div>
+  <p class="loader__caption">Погружение в Балтийское море</p>
+</div>
+
+<canvas id="sea" aria-hidden="true"></canvas>
+<div class="veil" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+<div class="cursor" aria-hidden="true"><i></i><span class="cursor__label"></span></div>
+
+<!-- Глубиномер -->
+<div class="depth" aria-hidden="true">
+  <span class="depth__label">Глубина</span>
+  <div class="depth__scale"><i class="depth__mark"></i></div>
+  <span class="depth__value"><b id="depth">0</b> м</span>
+</div>
+
+<header class="nav">
+  <a href="#top" class="nav__logo" data-cursor>
+    <svg viewBox="0 0 40 40" class="nav__mark" aria-hidden="true"><circle cx="20" cy="20" r="19" /><path d="M6 23c5-4 9-4 14 0s9 4 14 0M6 17c5-4 9-4 14 0s9 4 14 0" /></svg>
+    <span>Балтийские<br>Морепродукты</span>
+  </a>
+  <nav class="nav__links">
+    <a href="#about" data-cursor>Компания</a>
+    <a href="#process" data-cursor>Производство</a>
+    <a href="#products" data-cursor>Продукция</a>
+    <a href="#export" data-cursor>Экспорт</a>
+  </nav>
+  <a href="#contact" class="nav__cta magnetic" data-cursor><span>Связаться</span></a>
+</header>
+
+<main>
+
+  <!-- 1. Hero -->
+  <section class="hero" id="top">
+    <p class="hero__eyebrow"><span>Калининградская область</span><span>С 2005 года</span></p>
+    <h1 class="hero__title">
+      <span class="line"><span>Холодное</span></span>
+      <span class="line"><span><em>море.</em></span></span>
+      <span class="line"><span>Честная рыба.</span></span>
+    </h1>
+    <div class="hero__bottom">
+      <p class="hero__lead">Ловим, разделываем и консервируем рыбу Балтийского моря. Поставляем филе в Германию, Данию, Францию и другие страны Евросоюза.</p>
+      <div class="scroll-hint"><span>Листайте, чтобы погрузиться</span><i></i></div>
+    </div>
+  </section>
+
+  <!-- 2. Манифест -->
+  <section class="manifesto" id="about">
+    <p class="label">(01) Компания</p>
+    <p class="manifesto__text">Двадцать лет мы работаем с одним морем. Сырьё приходит с Балтики и из её заливов, поэтому наша продукция в основном охлаждённая и первой заморозки.</p>
+  </section>
+
+  <!-- 3. Цифры -->
+  <section class="stats">
+    <div class="stat">
+      <span class="stat__num"><span data-count="2005">2005</span></span>
+      <i class="stat__line"></i>
+      <span class="stat__label">год основания компании</span>
+    </div>
+    <div class="stat">
+      <span class="stat__num">68N</span>
+      <i class="stat__line"></i>
+      <span class="stat__label">еврономер для поставок в Евросоюз</span>
+    </div>
+    <div class="stat">
+      <span class="stat__num">HACCP</span>
+      <i class="stat__line"></i>
+      <span class="stat__label">единая европейская система контроля</span>
+    </div>
+    <div class="stat">
+      <span class="stat__num"><span data-count="2">2</span></span>
+      <i class="stat__line"></i>
+      <span class="stat__label">вида тары в консервном цехе: стекло и жесть</span>
+    </div>
+  </section>
+
+  <!-- 3b. Фильм: видео раскрывается на весь экран -->
+  <section class="film" aria-label="Балтийское море">
+    <div class="film__pin">
+      <div class="film__frame">
+        <video class="film__video" src="media/trawler.mp4" poster="media/trawler.jpg" muted loop playsinline preload="metadata"></video>
+        <div class="film__shade"></div>
+      </div>
+      <div class="film__text">
+        <p class="film__kicker">Балтийское море · каждый день с 2005 года</p>
+        <h2 class="film__title"><span class="mask"><span>Свежесть</span></span><span class="mask"><span><em>начинается в море</em></span></span></h2>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. Производство: горизонтальный скролл -->
+  <section class="process" id="process">
+    <div class="process__track">
+      <div class="process__intro">
+        <p class="label">(02) Производство</p>
+        <h2 class="title"><span class="mask"><span>От сети</span></span><span class="mask"><span>до <em>банки</em></span></span></h2>
+        <p class="process__lead">Весь путь в одних руках: Светловский городской округ, посёлок Волочаевское.</p>
+        <span class="process__arrow">→</span>
+      </div>
+
+      <article class="step">
+        <span class="step__n">01</span>
+        <figure class="step__media"><img src="media/catch.jpg" alt="Улов салаки и кильки на палубе" loading="lazy"></figure>
+        <h3>Улов</h3>
+        <p>Промышленное рыболовство в Балтийском море и заливах: треска, камбала, салака, килька.</p>
+      </article>
+
+      <article class="step">
+        <span class="step__n">02</span>
+        <figure class="step__media"><video src="media/fillet.mp4" poster="media/fillet.jpg" muted loop playsinline preload="metadata"></video></figure>
+        <h3>Разделка</h3>
+        <p>Филе трески, судака и окуня на современном оборудовании. По заказу делаем филе из мороженого сырья.</p>
+      </article>
+
+      <article class="step">
+        <span class="step__n">03</span>
+        <figure class="step__media"><img src="media/cold.jpg" alt="Холодильная камера" loading="lazy"></figure>
+        <h3>Холод</h3>
+        <p>Собственные холодильники для сырья и готовой продукции. Свежесть сохраняется от причала до клиента.</p>
+      </article>
+
+      <article class="step">
+        <span class="step__n">04</span>
+        <figure class="step__media"><video src="media/cans.mp4" poster="media/cans.jpg" muted loop playsinline preload="metadata"></video></figure>
+        <h3>Консервы</h3>
+        <p>Свой консервный цех: шпроты в масле, килька в томатном соусе и печень трески в стекле и жести.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- 5. Продукция: 3D-банка -->
+  <section class="products" id="products">
+    <div class="products__pin">
+      <div class="products__head">
+        <p class="label">(03) Консервы</p>
+        <div class="products__slides">
+          <div class="pslide" data-i="0">
+            <h2 class="pslide__title"><span class="mask"><span>Шпроты</span></span><span class="mask"><span><em>в масле</em></span></span></h2>
+            <p class="pslide__text">Классика Балтики. Килька нашего моря, консервированная в собственном цехе.</p>
+          </div>
+          <div class="pslide" data-i="1">
+            <h2 class="pslide__title"><span class="mask"><span>Килька</span></span><span class="mask"><span><em>в томате</em></span></span></h2>
+            <p class="pslide__text">Обжаренная килька в томатном соусе. Простой рецепт, который держится на качестве сырья.</p>
+          </div>
+          <div class="pslide" data-i="2">
+            <h2 class="pslide__title"><span class="mask"><span>Печень</span></span><span class="mask"><span><em>трески</em></span></span></h2>
+            <p class="pslide__text">Натуральная печень трески. Деликатес северных морей без лишних добавок.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="tin-stage">
+        <canvas id="tin" aria-label="3D-модель банки консервов"></canvas>
+        <div class="tin-shadow"></div>
+      </div>
+
+      <ol class="products__index">
+        <li data-i="0"><span>01</span>Шпроты в масле</li>
+        <li data-i="1"><span>02</span>Килька в томатном соусе</li>
+        <li data-i="2"><span>03</span>Печень трески натуральная</li>
+      </ol>
+      <div class="products__progress"><i></i></div>
+    </div>
+  </section>
+
+  <!-- 6. Рыба и филе -->
+  <section class="catalog" id="catalog">
+    <div class="catalog__head">
+      <p class="label">(04) Рыба и филе</p>
+      <h2 class="title"><span class="mask"><span>Из Балтийского</span></span><span class="mask"><span><em>моря и заливов</em></span></span></h2>
+    </div>
+    <ul class="catalog__list">
+      <li class="row" data-img="media/p-cod-fillet.jpg"><span class="row__n">01</span><span class="row__name">Филе трески</span><span class="row__type">охлаждённое / замороженное</span><img class="row__thumb" src="media/p-cod-fillet.jpg" alt="" loading="lazy"><span class="row__arrow">↗</span></li>
+      <li class="row" data-img="media/p-zander.jpg"><span class="row__n">02</span><span class="row__name">Филе судака</span><span class="row__type">охлаждённое / замороженное</span><img class="row__thumb" src="media/p-zander.jpg" alt="" loading="lazy"><span class="row__arrow">↗</span></li>
+      <li class="row" data-img="media/p-perch.jpg"><span class="row__n">03</span><span class="row__name">Филе окуня</span><span class="row__type">охлаждённое / замороженное</span><img class="row__thumb" src="media/p-perch.jpg" alt="" loading="lazy"><span class="row__arrow">↗</span></li>
+      <li class="row" data-img="media/p-cod.jpg"><span class="row__n">04</span><span class="row__name">Треска</span><span class="row__type">свежемороженая</span><img class="row__thumb" src="media/p-cod.jpg" alt="" loading="lazy"><span class="row__arrow">↗</span></li>
+      <li class="row" data-img="media/p-flounder.jpg"><span class="row__n">05</span><span class="row__name">Камбала</span><span class="row__type">свежемороженая</span><img class="row__thumb" src="media/p-flounder.jpg" alt="" loading="lazy"><span class="row__arrow">↗</span></li>
+      <li class="row" data-img="media/p-herring.jpg"><span class="row__n">06</span><span class="row__name">Салака</span><span class="row__type">свежемороженая</span><img class="row__thumb" src="media/p-herring.jpg" alt="" loading="lazy"><span class="row__arrow">↗</span></li>
+      <li class="row" data-img="media/p-sprat.jpg"><span class="row__n">07</span><span class="row__name">Килька</span><span class="row__type">свежемороженая</span><img class="row__thumb" src="media/p-sprat.jpg" alt="" loading="lazy"><span class="row__arrow">↗</span></li>
+    </ul>
+    <div class="preview" aria-hidden="true"><div class="preview__inner"></div></div>
+  </section>
+
+  <!-- 6b. Пауза: побережье -->
+  <section class="coast" aria-label="Побережье Балтийского моря">
+    <figure class="coast__frame"><img src="media/coast.jpg" alt="Побережье Балтийского моря" loading="lazy"></figure>
+    <p class="coast__caption"><span>Балтийское море</span><span>Сырьё из Балтийского моря и его заливов</span></p>
+  </section>
+
+  <!-- 7. Экспорт -->
+  <section class="export" id="export">
+    <div class="export__text">
+      <p class="label">(05) Экспорт</p>
+      <h2 class="title"><span class="mask"><span>Балтика</span></span><span class="mask"><span>на столах</span></span><span class="mask"><span><em>Европы</em></span></span></h2>
+      <p class="export__lead">Еврономер 68N и система HACCP открывают нам рынок Евросоюза. Филе уходит в Германию, Данию, Францию и другие страны ЕС, а также по всей России.</p>
+    </div>
+    <div class="export__map">
+      <svg viewBox="0 0 1000 600" class="map" aria-label="Карта поставок">
+        <g class="map__dots"></g>
+        <g class="map__routes">
+          <path d="M502 199 Q 400 120 300 230" />
+          <path d="M502 199 Q 430 110 351 172" />
+          <path d="M502 199 Q 320 150 147 359" />
+          <path d="M502 199 Q 680 100 852 170" />
+        </g>
+        <g class="map__points">
+          <g class="pt pt--home" transform="translate(502 199)"><circle r="22" class="pt__pulse"/><circle r="6"/><text x="16" y="34">Калининград</text></g>
+          <g class="pt" transform="translate(300 230)"><circle r="16" class="pt__pulse"/><circle r="4.5"/><text x="-14" y="34" text-anchor="end">Германия</text></g>
+          <g class="pt" transform="translate(351 172)"><circle r="16" class="pt__pulse"/><circle r="4.5"/><text x="-14" y="-16" text-anchor="end">Дания</text></g>
+          <g class="pt" transform="translate(147 359)"><circle r="16" class="pt__pulse"/><circle r="4.5"/><text x="16" y="34">Франция</text></g>
+          <g class="pt" transform="translate(852 170)"><circle r="16" class="pt__pulse"/><circle r="4.5"/><text x="-14" y="-16" text-anchor="end">Россия</text></g>
+        </g>
+      </svg>
+    </div>
+  </section>
+
+  <!-- 8. Контакты -->
+  <section class="contact" id="contact">
+    <p class="label">(06) Контакты</p>
+    <h2 class="contact__title"><span class="mask"><span>Обсудим</span></span><span class="mask"><span><em>поставки</em></span></span></h2>
+    <div class="contact__grid">
+      <div class="contact__col">
+        <span class="contact__k">Телефон</span>
+        <a href="tel:+74012311576" class="contact__big magnetic" data-cursor="Позвонить"><span>+7 (4012) 311-576</span></a>
+        <a href="tel:+79622501222" class="contact__big magnetic" data-cursor="Позвонить"><span>+7 962 250-12-22</span></a>
+      </div>
+      <div class="contact__col">
+        <span class="contact__k">Производство</span>
+        <p>Калининградская область,<br>Светловский ГО, пос. Волочаевское</p>
+      </div>
+      <div class="contact__col">
+        <span class="contact__k">Юридический адрес</span>
+        <p>238340, Калининградская обл., г. Светлый, пос. Волочаевское, ул. Центральная, 34, пом. II из «Д»</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="marquee" aria-hidden="true">
+    <div class="marquee__inner">
+      <span>Балтийские Морепродукты <i>✦</i> Baltic Seafood <i>✦</i> </span>
+      <span>Балтийские Морепродукты <i>✦</i> Baltic Seafood <i>✦</i> </span>
+    </div>
+  </div>
+  <div class="footer__bar">
+    <span>© 2005–2026 ООО «Балтийские морепродукты»</span>
+    <a href="#top" data-cursor>Наверх ↑</a>
+  </div>
+</footer>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>
