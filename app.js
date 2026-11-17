@@ -864,19 +864,15 @@ function setupCursor() {
    5. ЗАГРУЗКА И ИНТРО
    ========================================================= */
 async function boot() {
-  const countEl = document.getElementById('count');
-  const bar = document.querySelector('.loader__bar i');
-  const prog = { v: 0 };
-  const fake = gsap.to(prog, { v: 86, duration: 1.5, ease: 'power2.out', onUpdate: () => {
-    countEl.textContent = Math.round(prog.v); bar.style.transform = `scaleX(${prog.v / 100})`;
-  } });
-
-  await Promise.all([
-    document.fonts.load('italic 300 120px "Cormorant Garamond"'),
-    document.fonts.load('300 120px "Cormorant Garamond"'),
-    document.fonts.load('500 20px Manrope'),
-  ]).catch(() => {});
-  await document.fonts.ready;
+  // ждём шрифты, но не дольше 1,2 с: экрана загрузки нет, сайт стартует сразу
+  await Promise.race([
+    Promise.all([
+      document.fonts.load('italic 300 120px "Cormorant Garamond"'),
+      document.fonts.load('300 120px "Cormorant Garamond"'),
+      document.fonts.load('500 20px Manrope'),
+    ]).catch(() => {}),
+    new Promise((r) => setTimeout(r, 1200)),
+  ]);
 
   renderer.compile(scene, camera);
   renderer.setAnimationLoop(tick);
@@ -886,19 +882,14 @@ async function boot() {
   setupPreview();
   resizeTin();
 
-  await new Promise((r) => (fake.isActive() ? fake.eventCallback('onComplete', r) : r()));
-  await gsap.to(prog, { v: 100, duration: 0.6, ease: 'power2.inOut', onUpdate: () => {
-    countEl.textContent = Math.round(prog.v); bar.style.transform = `scaleX(${prog.v / 100})`;
-  } });
-
   scrollTo(0, 0);
   lenis.scrollTo(0, { immediate: true, force: true });
-  const tl = gsap.timeline({ onComplete: () => { document.body.classList.remove('is-loading'); lenis.start(); } });
-  tl.to('.loader__count, .loader__top, .loader__caption, .loader__bar', { yPercent: -40, opacity: 0, duration: 0.8, ease: 'power3.in', stagger: 0.04 })
-    .to('.loader', { clipPath: 'inset(0 0 100% 0)', duration: 1.3, ease: 'expo.inOut' }, '-=0.2')
-    .to(intro, { v: 0, duration: 3.2, ease: 'expo.out' }, '-=1.1')
-    .from('.hero__title .line > span', { yPercent: 120, rotate: 5, duration: 1.6, ease: 'expo.out', stagger: 0.11 }, '-=3.0')
-    .from('.nav > *, .hero__eyebrow span, .hero__lead, .scroll-hint, .depth', { opacity: 0, y: 24, duration: 1.2, ease: 'power3.out', stagger: 0.06 }, '-=2.4')
-    .set('.loader', { display: 'none' });
+  lenis.start();
+  const tl = gsap.timeline();
+  // y: 0 обязательно: иначе GSAP запоминает стартовый CSS-сдвиг (translateY 120%) как постоянный y
+  tl.fromTo('.hero__title .line > span', { y: 0, yPercent: 120, rotate: 5 }, { y: 0, yPercent: 0, rotate: 0, duration: 1.6, ease: 'expo.out', stagger: 0.11 }, 0.15)
+    .fromTo('.nav, .hero__eyebrow, .hero__lead, .scroll-hint, .depth', { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 1.2, ease: 'power3.out', stagger: 0.06, clearProps: 'transform' }, 0.4)
+    .to(intro, { v: 0, duration: 2.8, ease: 'expo.out' }, 0);
+  document.body.classList.remove('is-loading');
 }
 boot();
