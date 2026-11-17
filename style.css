@@ -159,9 +159,8 @@ section { position: relative; padding: 0 calc(var(--pad) + 56px) 0 var(--pad); }
 /* мягкое затемнение под слоганом слева-снизу, чтобы он читался на фоне моря */
 .hero::before {
   content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
-  background:
-    radial-gradient(70% 60% at 22% 70%, rgba(4, 9, 13, .55), transparent 72%),
-    linear-gradient(0deg, rgba(4, 9, 13, .55), transparent 45%);
+  /* эллипс полностью гаснет до краёв блока — без видимого стыка при прокрутке */
+  background: radial-gradient(ellipse 62% 40% at 26% 57%, rgba(4, 9, 13, .6), rgba(4, 9, 13, .25) 55%, transparent 100%);
 }
 .hero__title { text-shadow: 0 2px 30px rgba(3, 8, 12, .45), 0 0 2px rgba(3, 8, 12, .25); }
 .hero__eyebrow { display: flex; gap: 28px; font-size: 12px; letter-spacing: .22em; text-transform: uppercase; color: var(--muted); margin-bottom: 26px; }

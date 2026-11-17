@@ -1,8 +1,8 @@
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
-import { applyI18n, T, tr } from './i18n.js?v=1794927099';
-import { setupLiquid } from './liquid.js?v=1794927099';
-import { setupTransitions } from './transition.js?v=1794927099';
+import { applyI18n, T, tr } from './i18n.js?v=1794927325';
+import { setupLiquid } from './liquid.js?v=1794927325';
+import { setupTransitions } from './transition.js?v=1794927325';
 
 applyI18n();
 setupTransitions();

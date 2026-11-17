@@ -1,6 +1,6 @@
-import { applyI18n, LI, tr, PRODUCT_LIST } from './i18n.js?v=1794927099';
-import { setupLiquid } from './liquid.js?v=1794927099';
-import { setupTransitions } from './transition.js?v=1794927099';
+import { applyI18n, LI, tr, PRODUCT_LIST } from './i18n.js?v=1794927325';
+import { setupLiquid } from './liquid.js?v=1794927325';
+import { setupTransitions } from './transition.js?v=1794927325';
 
 /* =========================================================
    Страница продукта (заглушка): данные из PRODUCT_LIST
