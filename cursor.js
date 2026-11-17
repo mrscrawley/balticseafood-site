@@ -5,7 +5,7 @@
    Над ссылками крючок «клюёт»: золотится и подёргивается.
    ========================================================= */
 export function setupHookCursor() {
-  if (matchMedia('(hover: none), (pointer: coarse)').matches) return;
+  if (matchMedia('(hover: none), (pointer: coarse), (prefers-reduced-motion: reduce)').matches) return;
   const root = document.querySelector('.cursor');
   if (!root) return;
 

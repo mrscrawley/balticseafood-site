@@ -13,7 +13,7 @@
   --gold: #d2b278;
   --gold-2: #f0dcae;
   --serif: 'Baltic Display', 'Times New Roman', serif;
-  --display: 'Baltic Display Wave', 'Baltic Display', 'Times New Roman', serif;
+  --display: 'Baltic Display', 'Times New Roman', serif;   /* волна отключена до выбора в лаборатории шрифтов */
   --sans: 'Manrope', system-ui, sans-serif;
   --pad: clamp(20px, 4vw, 64px);
   --ease: cubic-bezier(.16, 1, .3, 1);
@@ -43,7 +43,7 @@ em { font-style: italic; color: var(--gold-2); font-weight: 300; }
 ul, ol { list-style: none; }
 ::selection { background: var(--gold); color: var(--ink); }
 
-@media (hover: hover) and (pointer: fine) {
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
   body, a, li, button, input, select, textarea, label { cursor: none; }
 }
 
@@ -269,7 +269,7 @@ section { position: relative; padding: 0 calc(var(--pad) + 56px) 0 var(--pad); }
   pointer-events: none; overflow: hidden; clip-path: inset(50% 50% 50% 50%);
 }
 .preview__inner { position: absolute; inset: 0; }
-.preview__inner img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.preview__inner img { position: absolute; left: -5%; top: -5%; width: 110%; height: 110%; object-fit: cover; }
 .row__thumb { display: none; }
 .step h3 { font-family: var(--serif); font-weight: 400; font-size: clamp(40px, 3.6vw, 60px); line-height: 1; margin-bottom: 18px; }
 .step p { color: var(--muted); max-width: 360px; font-size: 15px; }
@@ -559,6 +559,23 @@ html.is-arriving .curtain__mark { opacity: 1; }
 .pp-next:hover .pp-next__name { color: var(--gold-2); transform: translateX(20px); }
 .pp-next:hover .pp-next__arrow { transform: translateX(16px); }
 .page-product .footer { position: relative; z-index: 2; }
+
+
+/* ---------- Доступность: фокус с клавиатуры и ссылка «к содержанию» ---------- */
+:focus-visible { outline: 2px solid var(--gold); outline-offset: 4px; border-radius: 4px; }
+.row:focus-visible { outline-offset: -2px; }
+.dd__list:focus-visible, main:focus-visible { outline: none; }
+.dd__opt.is-active { outline: none; }
+.skip {
+  position: fixed; left: 16px; top: 12px; z-index: 200; padding: 12px 18px; border-radius: 100px;
+  background: var(--gold-2); color: #05090d; font-size: 14px; transform: translateY(-160%); transition: transform .3s;
+}
+.skip:focus-visible { transform: none; outline-offset: 3px; }
+.reduce-motion .cursor { display: none; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
+  .pp-bg { animation: none; }
+}
 
 /* ---------- Мобильная версия ---------- */
 @media (max-width: 900px) {

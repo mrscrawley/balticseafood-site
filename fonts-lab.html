@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Лаборатория шрифтов — Балтийские Морепродукты</title>
+<meta name="robots" content="noindex">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+@font-face { font-family: 'A'; font-weight: 300; src: url('fonts/BalticDisplay-Light.woff2') format('woff2'); }
+@font-face { font-family: 'A'; font-weight: 300; font-style: italic; src: url('fonts/BalticDisplay-LightItalic.woff2') format('woff2'); }
+@font-face { font-family: 'B'; font-weight: 300; src: url('fonts/lab/LabWaveFine-Light.woff2') format('woff2'); }
+@font-face { font-family: 'B'; font-weight: 300; font-style: italic; src: url('fonts/lab/LabWaveFine-LightItalic.woff2') format('woff2'); }
+@font-face { font-family: 'C'; src: url('fonts/lab/LabDidone-Regular.woff2') format('woff2'); }
+@font-face { font-family: 'D'; src: url('fonts/lab/LabInscription-Regular.woff2') format('woff2'); }
+@font-face { font-family: 'E'; src: url('fonts/lab/LabTenor-Regular.woff2') format('woff2'); }
+@font-face { font-family: 'F'; font-weight: 200; src: url('fonts/lab/LabGrotesk-ExtraLight.woff2') format('woff2'); }
+:root { --ink: #05090d; --text: #e8eef1; --muted: rgba(232,238,241,.56); --faint: rgba(232,238,241,.14); --gold: #d2b278; --gold-2: #f0dcae; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--ink); color: var(--text); font-family: Manrope, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+.top { position: sticky; top: 0; z-index: 5; display: flex; gap: 18px; align-items: center; padding: 18px 4vw; background: rgba(5,9,13,.85); backdrop-filter: blur(14px); border-bottom: 1px solid var(--faint); font-size: 13px; }
+.top b { font-weight: 500; letter-spacing: .14em; text-transform: uppercase; font-size: 11px; color: var(--gold); margin-right: auto; }
+.top a { color: var(--text); text-decoration: none; padding: 6px 12px; border: 1px solid var(--faint); border-radius: 100px; }
+.top a:hover { border-color: var(--gold); }
+.intro { padding: 10vh 4vw 6vh; max-width: 900px; color: var(--muted); line-height: 1.6; }
+.intro h1 { color: var(--text); font-weight: 400; font-size: 28px; margin-bottom: 14px; }
+section { padding: 10vh 4vw; border-top: 1px solid var(--faint); }
+.meta { display: flex; gap: 22px; align-items: baseline; margin-bottom: 5vh; }
+.meta .l { font-size: 64px; line-height: 1; color: var(--gold-2); font-family: inherit; font-weight: 300; }
+.meta h2 { font-size: 13px; font-weight: 500; letter-spacing: .18em; text-transform: uppercase; }
+.meta p { color: var(--muted); font-size: 14px; max-width: 620px; margin-top: 8px; line-height: 1.55; }
+.big { font-size: clamp(64px, 11vw, 210px); line-height: .9; letter-spacing: -.02em; }
+.big em, .mid em { color: var(--gold-2); }
+.mid { font-size: clamp(36px, 4.6vw, 80px); line-height: 1; margin-top: 5vh; }
+.small { font-size: clamp(22px, 2.2vw, 36px); line-height: 1.2; margin-top: 3vh; color: rgba(232,238,241,.85); }
+.photo { position: relative; margin-top: 6vh; height: 52vh; overflow: hidden; display: flex; align-items: flex-end; padding: 5vh 4vw; }
+.photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: brightness(.55) saturate(.8); }
+.photo .t { position: relative; font-size: clamp(48px, 7vw, 130px); line-height: .92; }
+.photo .t em { color: var(--gold-2); }
+.body { margin-top: 4vh; max-width: 520px; color: var(--muted); line-height: 1.6; font-size: 15px; }
+/* семейства */
+.fa { font-family: 'A', serif; font-weight: 300; }
+.fb { font-family: 'B', serif; font-weight: 300; }
+.fc { font-family: 'C', serif; }  .fc em { font-style: normal; }
+.fd { font-family: 'D', serif; text-transform: uppercase; letter-spacing: .04em; } .fd em { font-style: normal; }
+.fd.big { font-size: clamp(54px, 9vw, 170px); }
+.fe { font-family: 'E', sans-serif; text-transform: uppercase; letter-spacing: .06em; } .fe em { font-style: normal; }
+.fe.big { font-size: clamp(48px, 8vw, 150px); line-height: 1; }
+.ff { font-family: 'F', sans-serif; font-weight: 200; letter-spacing: -.045em; } .ff em { font-style: normal; }
+.pick { display: inline-block; margin-top: 5vh; font-size: 12px; letter-spacing: .16em; text-transform: uppercase; color: var(--gold); border: 1px solid rgba(210,178,120,.5); border-radius: 100px; padding: 10px 18px; }
+@media (max-width: 700px) { .top { flex-wrap: wrap; gap: 8px; } .top b { width: 100%; } }
+</style>
+</head>
+<body>
+<div class="top"><b>Лаборатория шрифтов · заголовки</b>
+  <a href="#a">A</a><a href="#b">B</a><a href="#c">C</a><a href="#d">D</a><a href="#e">E</a><a href="#f">F</a><a href="index.html">← На сайт</a>
+</div>
+
+<div class="intro">
+  <h1>Шесть направлений для заголовков</h1>
+  <p>Все варианты — наши сборки на основе открытых шрифтов (лицензия SIL OFL, можно менять и переименовывать): свои пропорции, разрядка и название. Основной текст сайта везде остаётся Manrope. Напишите букву, которая ближе, — доведу её и поставлю на сайт. Можно и смешать: например, заголовки из одного варианта, акценты из другого.</p>
+</div>
+
+<section id="a">
+  <div class="meta"><span class="l fa">A</span><div><h2>Baltic Display · чистый</h2><p>Сейчас на сайте, но без волнового прореза. Узкая контрастная антиква, золотые акценты курсивом. Спокойно, дорого, по-европейски.</p></div></div>
+  <p class="big fa">Обсудим <em>поставки</em></p>
+  <p class="mid fa">Холодное <em>море.</em> Честная рыба.</p>
+  <p class="small fa">Cold <em>sea.</em> Honest fish. · Kaltes <em>Meer.</em> Ehrlicher Fisch. · 2005 · 68N</p>
+  <div class="photo"><img src="media/trawler-m.jpg" alt=""><p class="t fa">Свежесть <em>начинается в море</em></p></div>
+  <p class="body">Ловим, разделываем и консервируем рыбу Балтийского моря. Поставляем филе в Германию, Данию, Францию и другие страны Евросоюза.</p>
+</section>
+
+<section id="b">
+  <div class="meta"><span class="l fb">B</span><div><h2>Baltic Display · тонкая волна</h2><p>Та же антиква, но прорез стал волосяным и ушёл выше. Читается как блик на воде, а не как разрыв — заметен только на крупных заголовках.</p></div></div>
+  <p class="big fb">Обсудим <em>поставки</em></p>
+  <p class="mid fb">Холодное <em>море.</em> Честная рыба.</p>
+  <p class="small fb">Cold <em>sea.</em> Honest fish. · Kaltes <em>Meer.</em> Ehrlicher Fisch. · 2005 · 68N</p>
+  <div class="photo"><img src="media/trawler-m.jpg" alt=""><p class="t fb">Свежесть <em>начинается в море</em></p></div>
+</section>
+
+<section id="c">
+  <div class="meta"><span class="l fc">C</span><div><h2>Дидона</h2><p>На основе Oranienbaum — русская классическая дидона с очень резким контрастом штрихов. Ощущение старой петербургской этикетки и дорогого деликатеса. Без курсива, акцент — цветом.</p></div></div>
+  <p class="big fc">Обсудим <em>поставки</em></p>
+  <p class="mid fc">Холодное <em>море.</em> Честная рыба.</p>
+  <p class="small fc">Cold <em>sea.</em> Honest fish. · Kaltes <em>Meer.</em> Ehrlicher Fisch. · 2005 · 68N</p>
+  <div class="photo"><img src="media/trawler-m.jpg" alt=""><p class="t fc">Свежесть <em>начинается в море</em></p></div>
+</section>
+
+<section id="d">
+  <div class="meta"><span class="l fd">D</span><div><h2>Надпись · капители</h2><p>На основе Forum — римские прописные, как высеченные в камне. Только заглавными, с разрядкой. Наследие, история, «дом с 2005 года».</p></div></div>
+  <p class="big fd">Обсудим <em>поставки</em></p>
+  <p class="mid fd">Холодное <em>море.</em> Честная рыба.</p>
+  <p class="small fd">Cold <em>sea.</em> Honest fish. · Kaltes <em>Meer.</em> · 2005 · 68N</p>
+  <div class="photo"><img src="media/trawler-m.jpg" alt=""><p class="t fd">Свежесть <em>начинается в море</em></p></div>
+</section>
+
+<section id="e">
+  <div class="meta"><span class="l fe">E</span><div><h2>Воздушный гротеск</h2><p>На основе Tenor Sans — рубленый шрифт с лёгкими раструбами. Прописные с разрядкой, как у модных и ювелирных домов. Современно, светло, по-скандинавски.</p></div></div>
+  <p class="big fe">Обсудим <em>поставки</em></p>
+  <p class="mid fe">Холодное <em>море.</em> Честная рыба.</p>
+  <p class="small fe">Cold <em>sea.</em> Honest fish. · Kaltes <em>Meer.</em> · 2005 · 68N</p>
+  <div class="photo"><img src="media/trawler-m.jpg" alt=""><p class="t fe">Свежесть <em>начинается в море</em></p></div>
+</section>
+
+<section id="f">
+  <div class="meta"><span class="l ff">F</span><div><h2>Тонкий гротеск</h2><p>Manrope ExtraLight крупно и плотно. Минимализм в духе Rossini Caviar и Columbi Salmon: никаких засечек, всё держится на размере и воздухе. Одно семейство на весь сайт.</p></div></div>
+  <p class="big ff">Обсудим <em>поставки</em></p>
+  <p class="mid ff">Холодное <em>море.</em> Честная рыба.</p>
+  <p class="small ff">Cold <em>sea.</em> Honest fish. · Kaltes <em>Meer.</em> Ehrlicher Fisch. · 2005 · 68N</p>
+  <div class="photo"><img src="media/trawler-m.jpg" alt=""><p class="t ff">Свежесть <em>начинается в море</em></p></div>
+</section>
+</body>
+</html>

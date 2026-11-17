@@ -5,17 +5,27 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Продукция — Балтийские Морепродукты</title>
 <meta name="theme-color" content="#05090d">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta property="og:type" content="product">
+<meta property="og:site_name" content="Балтийские Морепродукты">
+<meta property="og:title" content="Продукция — Балтийские Морепродукты">
+<meta property="og:description" content="Филе, рыба и консервы из Балтийского моря.">
+<meta property="og:image" content="https://mrscrawley.github.io/balticseafood-site/og.jpg">
+<meta name="twitter:card" content="summary_large_image">
 <script>try{if(sessionStorage.getItem('bs-arrive')==='1')document.documentElement.classList.add('is-arriving')}catch(e){}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="preload" href="fonts/BalticDisplayWave-Light.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="style.css?v=1794923498">
+<link rel="stylesheet" href="style.css?v=1794924554">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
 </head>
 <body class="page-product">
+<a class="skip" href="#main" data-i18n="skip">Перейти к содержанию</a>
 
 <div class="curtain" aria-hidden="true"><svg viewBox="0 0 40 40" class="curtain__mark"><circle cx="20" cy="20" r="19" /><path d="M6 23c5-4 9-4 14 0s9 4 14 0M6 17c5-4 9-4 14 0s9 4 14 0" /></svg></div>
 <div class="pp-bg" aria-hidden="true"></div>
@@ -28,12 +38,12 @@
     <span data-i18n="nav.home">Балтийские<br>Морепродукты</span>
   </a>
   <div class="nav__right">
-    <div class="lang"><a href="#" data-lang="ru" data-cursor>RU</a><span>/</span><a href="#" data-lang="en" data-cursor>EN</a></div>
+    <div class="lang"><a href="#" data-lang="ru" data-cursor>RU</a><span>/</span><a href="#" data-lang="en" data-cursor>EN</a><span>/</span><a href="#" data-lang="de" data-cursor>DE</a></div>
     <a href="index.html#buyers" class="nav__cta magnetic" data-cursor><span data-i18n="pp.cta">Запросить предложение</span></a>
   </div>
 </header>
 
-<main class="pp">
+<main class="pp" id="main" tabindex="-1">
   <section class="pp-hero">
     <div class="pp-hero__text">
       <a href="index.html#catalog" class="pp-back" data-cursor data-i18n="pp.back">← Вся продукция</a>
@@ -71,6 +81,6 @@
   </div>
 </footer>
 
-<script type="module" src="product.js?v=1794923498"></script>
+<script type="module" src="product.js?v=1794924554"></script>
 </body>
 </html>

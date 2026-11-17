@@ -1,8 +1,9 @@
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
-import { applyI18n, T, tr } from './i18n.js?v=1794923498';
-import { setupHookCursor } from './cursor.js?v=1794923498';
-import { setupTransitions } from './transition.js?v=1794923498';
+import { applyI18n, T, tr } from './i18n.js?v=1794924554';
+import { setupLiquid } from './liquid.js?v=1794924554';
+import { setupHookCursor } from './cursor.js?v=1794924554';
+import { setupTransitions } from './transition.js?v=1794924554';
 
 applyI18n();
 setupTransitions();
@@ -14,18 +15,22 @@ setupTransitions();
 const isTouch = matchMedia('(hover: none), (pointer: coarse)').matches;
 const isMobile = innerWidth < 900;
 // слабое устройство: телефон или мало памяти/ядер — облегчённая сцена
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+if (reduceMotion) document.documentElement.classList.add('reduce-motion');
 const isLow = isMobile || (navigator.deviceMemory || 8) <= 4 || (navigator.hardwareConcurrency || 8) <= 4;
 const lerp = (a, b, t) => a + (b - a) * t;
 const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
 const smooth = (t) => t * t * (3 - 2 * t);
 
 gsap.registerPlugin(ScrollTrigger);
+// «уменьшить движение»: все анимации завершаются почти мгновенно, море застывает
+if (reduceMotion) gsap.globalTimeline.timeScale(25);
 
 /* ---------- Плавный скролл ---------- */
 const lenis = new Lenis({
   duration: 1.35,
   easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-  smoothWheel: true,
+  smoothWheel: !reduceMotion,
   wheelMultiplier: 0.9,
 });
 lenis.on('scroll', ScrollTrigger.update);
@@ -386,9 +391,9 @@ const clock = new THREE.Clock();
    2. БАНКА КОНСЕРВОВ (отдельная WebGL-сцена)
    ========================================================= */
 const PRODUCTS = [
-  { l1: T('Шпроты', 'Sprats'), l2: T('в масле', 'in oil'), plate: '#0d2233', plate2: '#1a3a52' },
-  { l1: T('Килька', 'Sprat'), l2: T('в томатном соусе', 'in tomato sauce'), plate: '#5a1512', plate2: '#86261e' },
-  { l1: T('Печень трески', 'Cod liver'), l2: T('натуральная', 'natural'), plate: '#0f2c27', plate2: '#1d4a40' },
+  { l1: T('Шпроты', 'Sprats', 'Sprotten'), l2: T('в масле', 'in oil', 'in Öl'), plate: '#0d2233', plate2: '#1a3a52' },
+  { l1: T('Килька', 'Sprat', 'Sprotten'), l2: T('в томатном соусе', 'in tomato sauce', 'in Tomatensauce'), plate: '#5a1512', plate2: '#86261e' },
+  { l1: T('Печень трески', 'Cod liver', 'Dorschleber'), l2: T('натуральная', 'natural', 'natur'), plate: '#0f2c27', plate2: '#1d4a40' },
 ];
 
 const tinCanvas = document.getElementById('tin');
@@ -471,9 +476,9 @@ function drawLabel(p) {
   ctx.textBaseline = 'alphabetic';
   if ('letterSpacing' in ctx) ctx.letterSpacing = '10px';
   ctx.font = '500 26px Manrope';
-  ctx.fillText(T('БАЛТИЙСКИЕ МОРЕПРОДУКТЫ', 'BALTIC SEAFOOD'), W / 2, m + 104);
+  ctx.fillText(T('БАЛТИЙСКИЕ МОРЕПРОДУКТЫ', 'BALTIC SEAFOOD', 'BALTIC SEAFOOD'), W / 2, m + 104);
   ctx.font = '500 20px Manrope';
-  ctx.fillText(T('КАЛИНИНГРАДСКАЯ ОБЛАСТЬ · С 2005', 'KALININGRAD REGION · SINCE 2005'), W / 2, H - m - 46);
+  ctx.fillText(T('КАЛИНИНГРАДСКАЯ ОБЛАСТЬ · С 2005', 'KALININGRAD REGION · SINCE 2005', 'REGION KALININGRAD · SEIT 2005'), W / 2, H - m - 46);
   if ('letterSpacing' in ctx) ctx.letterSpacing = '0px';
   ctx.font = `italic 300 ${p.l1.length > 8 ? 132 : 168}px "Baltic Display"`;
   ctx.fillText(p.l1, W / 2, H / 2 + 34);
@@ -539,7 +544,7 @@ function adaptQuality(dt) {
 
 function tick() {
   const dt = Math.min(clock.getDelta(), 0.05);
-  const t = clock.elapsedTime;
+  const t = reduceMotion ? 6 : clock.elapsedTime;
   mouse.sx = lerp(mouse.sx, mouse.x, 0.05);
   mouse.sy = lerp(mouse.sy, mouse.y, 0.05);
   if (!document.hidden) adaptQuality(dt);
@@ -555,7 +560,7 @@ function tick() {
     seaState.under = under; seaState.depthT = depthT;
 
     // курсор над водой → рябь; под водой → точка, от которой шарахается стая
-    if (mouseMoved && !isTouch) {
+    if (mouseMoved && !isTouch && !reduceMotion) {
       mouseMoved = false;
       ndc.set(mouse.x, -mouse.y);
       raycaster.setFromCamera(ndc, camera);
@@ -1064,12 +1069,25 @@ function setupVideos() {
     entries.forEach((e) => {
       const v = e.target;
       if (e.isIntersecting) {
+        if (reduceMotion) return;                                         // без движения — только постер
         if (!v.src) v.src = (isLow && v.dataset.srcM) || v.dataset.src;   // на телефонах лёгкая версия
         v.play().catch(() => {});
       } else v.pause();
     });
   }, { rootMargin: '300px' });
-  document.querySelectorAll('video').forEach((v) => { v.muted = true; io.observe(v); });
+  // видео фильма запускаем отдельно — с начала, когда кадр уже раскрылся
+  document.querySelectorAll('video:not(.film__video)').forEach((v) => { v.muted = true; io.observe(v); });
+  const fv = document.querySelector('.film__video');
+  if (fv && !reduceMotion) {
+    fv.muted = true;
+    ScrollTrigger.create({ trigger: '.film', start: 'top 25%', end: 'bottom top',
+      onEnter: () => { if (!fv.src) fv.src = (isLow && fv.dataset.srcM) || fv.dataset.src; fv.currentTime = 0; fv.play().catch(() => {}); },
+      onEnterBack: () => { if (!fv.src) fv.src = (isLow && fv.dataset.srcM) || fv.dataset.src; fv.play().catch(() => {}); },
+      onLeave: () => fv.pause(), onLeaveBack: () => fv.pause() });
+    // подгружаем заранее, чтобы старт был мгновенным
+    ScrollTrigger.create({ trigger: '.film', start: 'top 200%', once: true,
+      onEnter: () => { if (!fv.src) { fv.preload = 'auto'; fv.src = (isLow && fv.dataset.srcM) || fv.dataset.src; } } });
+  }
 }
 
 /* ---------- Превью рыбы за курсором в каталоге ---------- */
@@ -1141,6 +1159,7 @@ async function boot() {
   setupPreview();
   setupSound();
   setupBuyers();
+  setupLiquid({ hover: ['.step__media'], preview: document.querySelector('.preview__inner') });
   resizeTin();
 
   // пришли по ссылке вида index.html#catalog — сразу к нужному блоку, иначе в начало

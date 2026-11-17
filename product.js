@@ -1,11 +1,12 @@
-import { applyI18n, LANG, tr, PRODUCT_LIST } from './i18n.js?v=1794923498';
-import { setupHookCursor } from './cursor.js?v=1794923498';
-import { setupTransitions } from './transition.js?v=1794923498';
+import { applyI18n, LI, tr, PRODUCT_LIST } from './i18n.js?v=1794924554';
+import { setupLiquid } from './liquid.js?v=1794924554';
+import { setupHookCursor } from './cursor.js?v=1794924554';
+import { setupTransitions } from './transition.js?v=1794924554';
 
 /* =========================================================
    Страница продукта (заглушка): данные из PRODUCT_LIST
    ========================================================= */
-const L = LANG === 'en' ? 1 : 0;
+const L = LI;
 const slug = new URLSearchParams(location.search).get('p') || 'sprats';
 const idx = Math.max(0, PRODUCT_LIST.findIndex((p) => p.slug === slug));
 const p = PRODUCT_LIST[idx];
@@ -16,7 +17,7 @@ applyI18n();
 // переключатель языка сохраняет текущий продукт
 document.querySelectorAll('.lang a').forEach((a) => { a.href = `product.html?p=${p.slug}&lang=${a.dataset.lang}`; });
 
-document.title = `${p.name[L]} — ${tr('meta.short', L ? 'Baltic Seafood' : 'Балтийские Морепродукты')}`;
+document.title = `${p.name[L]} — ${L ? 'Baltic Seafood' : 'Балтийские Морепродукты'}`;
 document.querySelector('.pp-type').textContent = p.type[L];
 const words = p.name[L].split(' ');
 const first = words.shift();
@@ -58,3 +59,4 @@ gsap.from('.pp-next__name', { yPercent: 40, opacity: 0, duration: 1.4, ease: 'ex
 
 /* ---------- курсор: крючок на леске ---------- */
 setupHookCursor();
+setupLiquid({ hover: ['.pp-media'] });

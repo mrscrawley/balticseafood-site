@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<base href="/balticseafood-site/">
+<title>Страница не найдена — Балтийские Морепродукты</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#04080c">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<style>
+@font-face { font-family: 'Baltic Display'; font-weight: 300; src: url('fonts/BalticDisplay-Light.woff2') format('woff2'); }
+@font-face { font-family: 'Baltic Display'; font-weight: 300; font-style: italic; src: url('fonts/BalticDisplay-LightItalic.woff2') format('woff2'); }
+:root { --ink: #04080c; --text: #e8eef1; --muted: rgba(232,238,241,.6); --gold: #d2b278; --gold-2: #f0dcae; --ease: cubic-bezier(.16,1,.3,1); }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body { background: var(--ink); color: var(--text); font-family: Manrope, system-ui, sans-serif; overflow: hidden; -webkit-font-smoothing: antialiased; }
+a { color: inherit; text-decoration: none; }
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) { body, a { cursor: none; } }
+
+/* глубина: градиент, каустика, снег */
+.deep { position: fixed; inset: 0; background: radial-gradient(80% 60% at 50% 0%, #12323f 0%, #071219 45%, #030609 100%); }
+.caustic { position: fixed; inset: -20%; opacity: .32; mix-blend-mode: screen; pointer-events: none;
+  background:
+    radial-gradient(18% 9% at 30% 30%, rgba(160,220,235,.35), transparent 70%),
+    radial-gradient(14% 8% at 70% 22%, rgba(160,220,235,.28), transparent 70%),
+    radial-gradient(22% 10% at 55% 45%, rgba(160,220,235,.22), transparent 70%);
+  filter: blur(18px); animation: caustic 14s ease-in-out infinite alternate; }
+@keyframes caustic { to { transform: translate(4%, 3%) scale(1.08) rotate(3deg); } }
+.rays { position: fixed; inset: 0; pointer-events: none; background:
+  linear-gradient(100deg, transparent 30%, rgba(170,220,235,.06) 36%, transparent 42%),
+  linear-gradient(80deg, transparent 52%, rgba(170,220,235,.05) 57%, transparent 63%); animation: rays 9s ease-in-out infinite alternate; }
+@keyframes rays { to { opacity: .45; transform: translateX(2%); } }
+canvas#snow { position: fixed; inset: 0; width: 100%; height: 100%; }
+.grain { position: fixed; inset: -50%; opacity: .06; pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+
+/* шапка */
+.top { position: fixed; left: 0; right: 0; top: 0; z-index: 5; display: flex; justify-content: space-between; align-items: center; padding: 26px clamp(20px,4vw,64px); }
+.logo { display: flex; align-items: center; gap: 12px; font-size: 11px; line-height: 1.25; letter-spacing: .2em; text-transform: uppercase; font-weight: 500; }
+.logo svg { width: 34px; height: 34px; fill: none; stroke: currentColor; stroke-width: 1.2; }
+.lang { display: flex; gap: 6px; font-size: 12px; letter-spacing: .14em; }
+.lang a { opacity: .5; } .lang a.is-active, .lang a:hover { opacity: 1; } .lang span { opacity: .35; }
+
+/* 404 */
+.num { position: fixed; left: 50%; top: 44%; transform: translate(-50%, -50%); z-index: 1; white-space: nowrap;
+  font-family: 'Baltic Display', serif; font-weight: 300; font-size: clamp(220px, 38vw, 720px); line-height: .8; letter-spacing: -.04em;
+  color: transparent; -webkit-text-stroke: 1px rgba(240,220,174,.55);
+  background: linear-gradient(115deg, rgba(240,220,174,0) 20%, rgba(240,220,174,.22) 40%, rgba(160,220,235,.12) 50%, rgba(240,220,174,0) 65%);
+  background-size: 250% 100%; -webkit-background-clip: text; background-clip: text; animation: shimmer 7s ease-in-out infinite; user-select: none; }
+@keyframes shimmer { 0% { background-position: 100% 0; } 100% { background-position: -150% 0; } }
+.num .zero { position: relative; display: inline-block; }
+
+/* леска с крючком, на который никто не клюнул */
+.line { position: fixed; left: 50%; top: 0; z-index: 2; width: 40px; margin-left: -20px; height: 49vh; pointer-events: none; transform-origin: 50% 0; animation: sway 5s ease-in-out infinite; }
+.line svg { width: 100%; height: 100%; overflow: visible; }
+.line path, .line circle { fill: none; stroke: #e9eef1; stroke-width: 1.4; stroke-linecap: round; }
+.line .ln { stroke: rgba(232,238,241,.5); stroke-width: .8; }
+.line .sinker { fill: var(--gold); stroke: none; }
+@keyframes sway { 0%,100% { transform: rotate(1.4deg); } 50% { transform: rotate(-1.4deg); } }
+
+/* текст */
+.copy { position: fixed; left: 0; right: 0; bottom: 9vh; z-index: 3; display: grid; grid-template-columns: 1.2fr 1fr; gap: 5vw; align-items: end; padding: 0 clamp(20px,4vw,64px); }
+.kicker { font-size: 12px; letter-spacing: .24em; text-transform: uppercase; color: var(--gold); margin-bottom: 22px; }
+h1 { font-family: 'Baltic Display', serif; font-weight: 300; font-size: clamp(48px, 6.4vw, 118px); line-height: .9; letter-spacing: -.02em; }
+h1 em { color: var(--gold-2); font-style: italic; }
+.mask { display: block; overflow: hidden; padding-bottom: .06em; margin-bottom: -.06em; }
+.mask > span { display: inline-block; }
+.text { color: var(--muted); font-size: 15px; line-height: 1.6; max-width: 420px; margin-bottom: 32px; }
+.btns { display: flex; gap: 14px; flex-wrap: wrap; }
+.btn { display: inline-flex; align-items: center; gap: 10px; padding: 17px 30px; border-radius: 100px; font-size: 14px; letter-spacing: .04em; transition: background .5s var(--ease), color .5s var(--ease), border-color .5s; }
+.btn--main { background: var(--gold-2); color: #05090d; }
+.btn--main:hover { background: #fff3d4; }
+.btn--ghost { border: 1px solid rgba(232,238,241,.3); }
+.btn--ghost:hover { border-color: var(--gold); }
+.btn i { font-style: normal; transition: transform .6s var(--ease); }
+.btn--main:hover i { transform: translateY(-4px); }
+
+/* глубиномер */
+.depth { position: fixed; right: clamp(20px,4vw,64px); top: 50%; transform: translateY(-50%); z-index: 3; display: flex; flex-direction: column; align-items: center; gap: 14px; font-size: 10px; letter-spacing: .22em; text-transform: uppercase; color: var(--muted); }
+.depth .bar { width: 9px; height: 180px; background: repeating-linear-gradient(180deg, rgba(232,238,241,.14) 0 1px, transparent 1px 12px); position: relative; }
+.depth .bar i { position: absolute; left: -6px; right: -6px; height: 1px; background: var(--gold); top: 0; }
+.depth b { font-size: 12px; color: var(--text); font-weight: 500; letter-spacing: .08em; font-variant-numeric: tabular-nums; }
+.depth .v { writing-mode: vertical-rl; transform: rotate(180deg); }
+
+/* курсор-крючок */
+.cursor { position: fixed; inset: 0; z-index: 90; pointer-events: none; opacity: 0; transition: opacity .4s; }
+.cursor.is-on { opacity: 1; }
+.cursor__svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.cursor__line { fill: none; stroke: rgba(232,238,241,.55); stroke-width: .8; }
+.cursor__eye, .cursor__bend, .cursor__barb { fill: none; stroke: #e9eef1; stroke-width: 1.7; stroke-linecap: round; }
+.cursor.is-hover .cursor__eye, .cursor.is-hover .cursor__bend, .cursor.is-hover .cursor__barb { stroke: var(--gold-2); }
+.cursor__label { display: none; }
+.curtain { position: fixed; inset: 0; z-index: 120; background: #04080c; display: grid; place-items: center; clip-path: inset(0 0 100% 0); pointer-events: none; }
+.curtain__mark { width: 54px; height: 54px; fill: none; stroke: var(--gold); stroke-width: 1.1; opacity: 0; }
+:focus-visible { outline: 2px solid var(--gold); outline-offset: 4px; border-radius: 6px; }
+
+@media (max-width: 800px) {
+  .copy { grid-template-columns: 1fr; gap: 26px; bottom: 6vh; }
+  .num { top: 34%; }
+  .line { height: 30vh; }
+  .depth { display: none; }
+}
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+</style>
+</head>
+<body data-title-key="nf.title">
+<div class="curtain" aria-hidden="true"><svg viewBox="0 0 40 40" class="curtain__mark"><circle cx="20" cy="20" r="19" /><path d="M6 23c5-4 9-4 14 0s9 4 14 0M6 17c5-4 9-4 14 0s9 4 14 0" /></svg></div>
+<div class="deep"></div>
+<div class="caustic"></div>
+<div class="rays"></div>
+<canvas id="snow" aria-hidden="true"></canvas>
+<div class="grain"></div>
+<div class="cursor" aria-hidden="true"></div>
+
+<header class="top">
+  <a href="index.html" class="logo"><svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="19"/><path d="M6 23c5-4 9-4 14 0s9 4 14 0M6 17c5-4 9-4 14 0s9 4 14 0"/></svg><span data-i18n="nav.home">Балтийские<br>Морепродукты</span></a>
+  <div class="lang"><a href="#" data-lang="ru">RU</a><span>/</span><a href="#" data-lang="en">EN</a><span>/</span><a href="#" data-lang="de">DE</a></div>
+</header>
+
+<div class="num" aria-hidden="true">4<span class="zero">0</span>4</div>
+
+<div class="line" aria-hidden="true">
+  <svg viewBox="0 0 40 400" preserveAspectRatio="none">
+    <path class="ln" d="M20 0 L20 352" vector-effect="non-scaling-stroke"/>
+  </svg>
+</div>
+<svg class="hook" aria-hidden="true" viewBox="0 0 40 60" style="position:fixed;left:50%;width:40px;height:60px;margin-left:-20px;z-index:2;pointer-events:none;overflow:visible">
+  <ellipse class="sinker" cx="20" cy="4" rx="4" ry="6" fill="#d2b278"/>
+  <g fill="none" stroke="#e9eef1" stroke-width="1.6" stroke-linecap="round">
+    <circle cx="20" cy="15" r="3"/>
+    <path d="M20 18 L20 38 Q20 51 29.5 50.5 Q36.5 49.8 35.5 39"/>
+    <path d="M35.5 39 L31.4 43.6"/>
+  </g>
+</svg>
+
+<main class="copy">
+  <div>
+    <p class="kicker" data-i18n="nf.kicker">Ошибка 404 · глубина неизвестна</p>
+    <h1><span class="mask"><span data-i18n="nf.l1">Эта страница</span></span><span class="mask"><span data-i18n="nf.l2"><em>ушла на глубину</em></span></span></h1>
+  </div>
+  <div>
+    <p class="text" data-i18n="nf.text">Мы закинули леску, но никто не клюнул. Возможно, ссылка устарела или страницу унесло течением.</p>
+    <div class="btns">
+      <a class="btn btn--main" href="index.html"><span data-i18n="nf.home">Вернуться на поверхность</span> <i>↑</i></a>
+      <a class="btn btn--ghost" href="index.html#catalog" data-i18n="nf.catalog">Продукция</a>
+    </div>
+  </div>
+</main>
+
+<div class="depth" aria-hidden="true"><span class="v" data-i18n="depth.label">Глубина</span><div class="bar"><i></i></div><b><span id="d">0</span> <span data-i18n="depth.unit">м</span></b></div>
+
+<script type="module">
+import { applyI18n, LANG } from './i18n.js?v=1794924554';
+import { setupHookCursor } from './cursor.js?v=1794924554';
+import { setupTransitions } from './transition.js?v=1794924554';
+applyI18n();
+document.querySelectorAll('.lang a').forEach((a) => { a.href = `index.html?lang=${a.dataset.lang}`; });
+setupHookCursor();
+setupTransitions();
+
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+// крючок висит в «нуле» и чуть покачивается вместе с леской
+const zero = document.querySelector('.zero'), hook = document.querySelector('.hook'), line = document.querySelector('.line');
+function place() {
+  const r = zero.getBoundingClientRect();
+  const y = r.top + r.height * 0.5;
+  line.style.height = (y - 4) + 'px';
+  hook.style.top = (y - 6) + 'px';
+}
+place(); addEventListener('resize', place); document.fonts.ready.then(place);
+if (!reduce) {
+  gsap.to(hook, { rotation: 5, transformOrigin: '50% 0%', duration: 2.5, ease: 'sine.inOut', yoyo: true, repeat: -1 });
+  gsap.to(hook, { y: 8, duration: 3.4, ease: 'sine.inOut', yoyo: true, repeat: -1 });
+}
+
+// появление
+const tl = gsap.timeline({ delay: 0.2 });
+tl.from('.num', { opacity: 0, scale: 1.08, duration: 2.2, ease: 'expo.out' })
+  .from('.line', { scaleY: 0, duration: 1.6, ease: 'expo.inOut' }, 0.3)
+  .from('.hook', { opacity: 0, y: -40, duration: 1.2, ease: 'expo.out' }, 1.2)
+  .fromTo('h1 .mask > span', { y: 0, yPercent: 115 }, { y: 0, yPercent: 0, duration: 1.5, ease: 'expo.out', stagger: 0.1 }, 0.5)
+  .from('.kicker, .text, .btns, .top, .depth', { opacity: 0, y: 20, duration: 1.1, ease: 'power3.out', stagger: 0.07 }, 0.8);
+
+// глубиномер «погружается» до 404 м
+const d = document.getElementById('d'), mark = document.querySelector('.depth .bar i'), o = { v: 0 };
+gsap.to(o, { v: 404, duration: reduce ? 0 : 3.2, ease: 'expo.out', delay: 0.6,
+  onUpdate: () => { d.textContent = Math.round(o.v); mark.style.top = (o.v / 404 * 179) + 'px'; } });
+
+// морской снег поднимается вверх
+const c = document.getElementById('snow'), ctx = c.getContext('2d');
+let W, H, dots = [];
+function size() {
+  const pr = Math.min(devicePixelRatio, 2);
+  W = c.width = innerWidth * pr; H = c.height = innerHeight * pr;
+  dots = Array.from({ length: Math.round(innerWidth * innerHeight / 9000) }, () => ({
+    x: Math.random() * W, y: Math.random() * H, r: (Math.random() * 1.6 + 0.4) * pr,
+    s: (Math.random() * 0.25 + 0.06) * pr, a: Math.random() * 0.5 + 0.15, p: Math.random() * 6.28 }));
+}
+size(); addEventListener('resize', size);
+(function draw(t) {
+  ctx.clearRect(0, 0, W, H);
+  for (const p of dots) {
+    if (!reduce) { p.y -= p.s; p.x += Math.sin(t / 2400 + p.p) * 0.15; if (p.y < -5) { p.y = H + 5; p.x = Math.random() * W; } }
+    ctx.globalAlpha = p.a; ctx.fillStyle = '#bfe0ea';
+    ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, 6.283); ctx.fill();
+  }
+  if (!reduce) requestAnimationFrame(draw);
+})(0);
+</script>
+</body>
+</html>
