@@ -1,9 +1,9 @@
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
-import { applyI18n, T, tr } from './i18n.js?v=1794926009';
-import { setupLiquid } from './liquid.js?v=1794926009';
-import { setupHookCursor } from './cursor.js?v=1794926009';
-import { setupTransitions } from './transition.js?v=1794926009';
+import { applyI18n, T, tr } from './i18n.js?v=1794926201';
+import { setupLiquid } from './liquid.js?v=1794926201';
+import { setupHookCursor } from './cursor.js?v=1794926201';
+import { setupTransitions } from './transition.js?v=1794926201';
 
 applyI18n();
 setupTransitions();
@@ -1116,6 +1116,9 @@ function setupPreview() {
       gsap.to(pv, { clipPath: 'circle(50% at 50% 50%)', duration: 0.9, ease: 'expo.out', overwrite: true });
       const prev = current; current = row;
       const img = new Image(); img.src = row.dataset.img; img.alt = '';
+      // своё приближение для каждого фото: филе крупнее, целая рыба — чтобы не резало хвост
+      const z = parseFloat(row.dataset.zoom || '1'), o = (1 - z) * 50;
+      img.style.cssText = `left:${o}%;top:${o}%;width:${z * 100}%;height:${z * 100}%`;
       inner.appendChild(img);
       const dir = prev && rowsAll.indexOf(prev) > i ? -1 : 1;
       gsap.fromTo(img, { yPercent: 100 * dir, scale: 1.3 }, { yPercent: 0, scale: 1, duration: 0.9, ease: 'expo.out',
