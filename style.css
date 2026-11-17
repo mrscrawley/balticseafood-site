@@ -702,3 +702,5 @@ html.is-arriving .curtain__mark { opacity: 1; }
   .row:hover .row__type { color: var(--gold-2); }
 }
 @media (max-width: 900px) { .catalog .row__name { font-size: 40px; } }
+
+.nowrap { white-space: nowrap; }

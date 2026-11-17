@@ -67,8 +67,8 @@ const EN = {
   'form.opt0': 'Choose an item', 'form.optMany': 'Several items',
   'form.volume': 'Volume per month', 'form.contact': 'Phone or email', 'form.comment': 'Comment',
   'form.submit': 'Send request',
-  'form.note': 'Demo mode: requests are not sent yet. Call us: +7 (4012) 311-576',
-  'form.done': 'Thank you! The form is in demo mode and the request has not been sent. Please call +7 (4012) 311-576.',
+  'form.note': 'Demo mode: requests are not sent yet. Call us: <span class="nowrap">+7 (4012) 311-576</span>',
+  'form.done': 'Thank you! The form is in demo mode and the request has not been sent. Please call <span class="nowrap">+7 (4012) 311-576</span>.',
 
   'contact.label': 'Contacts', 'contact.l1': 'Let’s talk', 'contact.l2': '<em>supplies</em>',
   'contact.phone': 'Phone', 'contact.plant': 'Production',
@@ -150,8 +150,8 @@ const DE = {
   'form.opt0': 'Position wählen', 'form.optMany': 'Mehrere Positionen',
   'form.volume': 'Menge pro Monat', 'form.contact': 'Telefon oder E-Mail', 'form.comment': 'Kommentar',
   'form.submit': 'Anfrage senden',
-  'form.note': 'Demomodus: Anfragen werden noch nicht versendet. Rufen Sie uns an: +7 (4012) 311-576',
-  'form.done': 'Vielen Dank! Das Formular ist im Demomodus, die Anfrage wurde nicht gesendet. Bitte rufen Sie uns an: +7 (4012) 311-576.',
+  'form.note': 'Demomodus: Anfragen werden noch nicht versendet. Rufen Sie uns an: <span class="nowrap">+7 (4012) 311-576</span>',
+  'form.done': 'Vielen Dank! Das Formular ist im Demomodus, die Anfrage wurde nicht gesendet. Bitte rufen Sie uns an: <span class="nowrap">+7 (4012) 311-576</span>.',
 
   'contact.label': 'Kontakt', 'contact.l1': 'Sprechen wir', 'contact.l2': '<em>über Lieferungen</em>',
   'contact.phone': 'Telefon', 'contact.plant': 'Produktion',
