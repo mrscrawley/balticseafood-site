@@ -280,10 +280,7 @@ section { position: relative; padding: 0 calc(var(--pad) + 56px) 0 var(--pad); }
 .preview__inner { position: absolute; inset: 0; border-radius: 50%; overflow: hidden;
   background: radial-gradient(circle at 50% 45%, #27323a 0%, #1a2228 55%, #10161b 100%); }
 /* фото 4:5 целиком вписано в круг, края растворяются в сланцевом фоне */
-.preview__inner img { position: absolute; left: 50%; top: 50%; width: 78%; height: 97%; margin: -48.5% 0 0 -39%; object-fit: cover;
-  filter: saturate(.8) contrast(1.05) brightness(.95);
-  -webkit-mask-image: radial-gradient(ellipse 52% 52% at 50% 50%, #000 74%, transparent 100%);
-          mask-image: radial-gradient(ellipse 52% 52% at 50% 50%, #000 74%, transparent 100%); }
+.preview__inner img { position: absolute; left: -12%; top: -12%; width: 124%; height: 124%; object-fit: cover; filter: saturate(.85) contrast(1.04); }
 .preview::before {  /* тонировка под палитру и затемнение к краям */
   content: ''; position: absolute; inset: 0; z-index: 2; border-radius: 50%;
   background: radial-gradient(circle at 50% 50%, transparent 60%, rgba(4, 12, 18, .45) 85%, rgba(4, 12, 18, .85) 100%),
@@ -649,7 +646,7 @@ html.is-arriving .curtain__mark { opacity: 1; }
   .coast__caption { margin-left: 0; font-size: 14px; }
   .preview { display: none; }
   .row { grid-template-columns: 34px 1fr 64px 24px; }
-  .row__thumb { display: block; width: 64px; height: 64px; object-fit: cover; }
+  .row__thumb { display: block; width: 64px; height: 64px; object-fit: cover; border-radius: 50%; box-shadow: 0 0 0 1px rgba(240, 220, 174, .35); }
   .products__pin { grid-template-columns: 1fr; grid-template-rows: auto 1fr auto; padding: 90px 16px 70px; }
   .products__slides { height: 190px; }
   .pslide__text { margin-top: 14px; font-size: 14px; }

@@ -1,9 +1,9 @@
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
-import { applyI18n, T, tr } from './i18n.js?v=1794925674';
-import { setupLiquid } from './liquid.js?v=1794925674';
-import { setupHookCursor } from './cursor.js?v=1794925674';
-import { setupTransitions } from './transition.js?v=1794925674';
+import { applyI18n, T, tr } from './i18n.js?v=1794926009';
+import { setupLiquid } from './liquid.js?v=1794926009';
+import { setupHookCursor } from './cursor.js?v=1794926009';
+import { setupTransitions } from './transition.js?v=1794926009';
 
 applyI18n();
 setupTransitions();
@@ -1099,8 +1099,13 @@ function setupPreview() {
   const py = gsap.quickTo(pv, 'y', { duration: 0.7, ease: 'power3' });
   const pr = gsap.quickTo(pv, 'rotation', { duration: 0.9, ease: 'power3' });
   let lastX = 0;
+  const listEl = document.querySelector('.catalog__list');
   addEventListener('pointermove', (e) => {
-    px(e.clientX); py(e.clientY);
+    // окошко ходит за курсором только в пределах списка — не заезжает на заголовок
+    const lr = listEl.getBoundingClientRect(), half = pv.offsetHeight / 2;
+    const yMin = lr.top + half + 8, yMax = lr.bottom - half - 8;
+    py(yMax > yMin ? Math.min(yMax, Math.max(yMin, e.clientY)) : e.clientY);
+    px(e.clientX);
     pr(clamp((e.clientX - lastX) * 0.3, -6, 6)); lastX = e.clientX;
   });
   let current = null;
