@@ -19,6 +19,9 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/d3-array@3.2.4/dist/d3-array.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/d3-geo@3.1.1/dist/d3-geo.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/dist/topojson-client.min.js"></script>
 </head>
 <body class="is-loading">
 
@@ -215,7 +218,11 @@
   <!-- 6b. Пауза: побережье -->
   <section class="coast" aria-label="Побережье Балтийского моря">
     <figure class="coast__frame"><img src="media/coast.jpg" alt="Побережье Балтийского моря" loading="lazy"></figure>
-    <p class="coast__caption"><span>Балтийское море</span><span>Сырьё из Балтийского моря и его заливов</span></p>
+    <div class="coast__content">
+      <p class="label">54°40′ N · 20°08′ E</p>
+      <h2 class="coast__title"><span class="mask"><span>Наше море</span></span><span class="mask"><span><em>рядом с цехом</em></span></span></h2>
+      <p class="coast__caption">Сырьё приходит из Балтийского моря и его заливов, поэтому продукция в основном охлаждённая и первой заморозки.</p>
+    </div>
   </section>
 
   <!-- 7. Экспорт -->
@@ -226,21 +233,22 @@
       <p class="export__lead">Еврономер 68N и система HACCP открывают нам рынок Евросоюза. Филе уходит в Германию, Данию, Францию и другие страны ЕС, а также по всей России.</p>
     </div>
     <div class="export__map">
-      <svg viewBox="0 0 1000 600" class="map" aria-label="Карта поставок">
-        <g class="map__dots"></g>
-        <g class="map__routes">
-          <path d="M502 199 Q 400 120 300 230" />
-          <path d="M502 199 Q 430 110 351 172" />
-          <path d="M502 199 Q 320 150 147 359" />
-          <path d="M502 199 Q 680 100 852 170" />
+      <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" class="map" aria-label="Карта поставок: из Калининграда в Германию, Данию, Францию и по России">
+        <defs>
+          <radialGradient id="mapFade" cx="62%" cy="42%" r="62%">
+            <stop offset="0" stop-color="#fff" stop-opacity="1"/>
+            <stop offset=".7" stop-color="#fff" stop-opacity=".55"/>
+            <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+          </radialGradient>
+          <mask id="mapMask"><rect width="1600" height="900" fill="url(#mapFade)"/></mask>
+          <filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        </defs>
+        <g mask="url(#mapMask)">
+          <path class="map__borders" />
+          <g class="map__dots"></g>
         </g>
-        <g class="map__points">
-          <g class="pt pt--home" transform="translate(502 199)"><circle r="22" class="pt__pulse"/><circle r="6"/><text x="16" y="34">Калининград</text></g>
-          <g class="pt" transform="translate(300 230)"><circle r="16" class="pt__pulse"/><circle r="4.5"/><text x="-14" y="34" text-anchor="end">Германия</text></g>
-          <g class="pt" transform="translate(351 172)"><circle r="16" class="pt__pulse"/><circle r="4.5"/><text x="-14" y="-16" text-anchor="end">Дания</text></g>
-          <g class="pt" transform="translate(147 359)"><circle r="16" class="pt__pulse"/><circle r="4.5"/><text x="16" y="34">Франция</text></g>
-          <g class="pt" transform="translate(852 170)"><circle r="16" class="pt__pulse"/><circle r="4.5"/><text x="-14" y="-16" text-anchor="end">Россия</text></g>
-        </g>
+        <g class="map__routes"></g>
+        <g class="map__points"></g>
       </svg>
     </div>
   </section>
@@ -268,12 +276,6 @@
 </main>
 
 <footer class="footer">
-  <div class="marquee" aria-hidden="true">
-    <div class="marquee__inner">
-      <span>Балтийские Морепродукты <i>✦</i> Baltic Seafood <i>✦</i> </span>
-      <span>Балтийские Морепродукты <i>✦</i> Baltic Seafood <i>✦</i> </span>
-    </div>
-  </div>
   <div class="footer__bar">
     <span>© 2005–2026 ООО «Балтийские морепродукты»</span>
     <a href="#top" data-cursor>Наверх ↑</a>

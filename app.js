@@ -37,6 +37,17 @@ document.querySelectorAll('a[href^="#"]').forEach((a) => {
   });
 });
 
+/* ---------- Шапка: стеклянная подложка при скролле, прячется вниз / появляется вверх ---------- */
+const navEl = document.querySelector('.nav');
+let navLast = 0;
+lenis.on('scroll', ({ scroll }) => {
+  navEl.classList.toggle('is-scrolled', scroll > 40);
+  const down = scroll > navLast + 2, up = scroll < navLast - 2;
+  if (down && scroll > innerHeight * 0.8) navEl.classList.add('is-hidden');
+  else if (up) navEl.classList.remove('is-hidden');
+  navLast = scroll;
+});
+
 /* ---------- Мышь ---------- */
 const mouse = { x: 0, y: 0, sx: 0, sy: 0, px: innerWidth / 2, py: innerHeight / 2 };
 addEventListener('pointermove', (e) => {
@@ -609,9 +620,13 @@ function setupScroll() {
   gsap.to('.film__text', { opacity: 0, y: -60, ease: 'none', scrollTrigger: { trigger: '.film', start: '72% center', end: 'bottom top', scrub: true } });
 
   // Побережье: кадр раскрывается, фото плывёт
-  gsap.fromTo('.coast__frame', { clipPath: 'inset(12% 10% 12% 10%)' }, { clipPath: 'inset(0% 0% 0% 0%)', ease: 'none',
-    scrollTrigger: { trigger: '.coast', start: 'top bottom', end: 'center center', scrub: true } });
-  gsap.fromTo('.coast__frame img', { yPercent: -8, scale: 1.12 }, { yPercent: 8, scale: 1, ease: 'none',
+  gsap.fromTo('.coast__frame img', { yPercent: -8, scale: 1.18 }, { yPercent: 8, scale: 1, ease: 'none',
+    scrollTrigger: { trigger: '.coast', start: 'top bottom', end: 'bottom top', scrub: true } });
+  gsap.from('.coast__title .mask > span', { yPercent: 115, rotate: 3, duration: 1.5, ease: 'expo.out', stagger: 0.12,
+    scrollTrigger: { trigger: '.coast__title', start: 'top 85%' } });
+  gsap.from('.coast__caption, .coast .label', { opacity: 0, y: 30, duration: 1.2, ease: 'power3.out', stagger: 0.1,
+    scrollTrigger: { trigger: '.coast__title', start: 'top 80%' } });
+  gsap.to('.coast__content', { yPercent: -18, ease: 'none',
     scrollTrigger: { trigger: '.coast', start: 'top bottom', end: 'bottom top', scrub: true } });
 
   const mm = gsap.matchMedia();
@@ -688,35 +703,93 @@ function setupScroll() {
 
   // Каталог: строки
   gsap.utils.toArray('.row').forEach((r) => {
-    gsap.from(r.children, { yPercent: 100, opacity: 0, duration: 1.2, ease: 'expo.out', stagger: 0.05, scrollTrigger: { trigger: r, start: 'top 92%' } });
+    gsap.from(r, { y: 50, opacity: 0, duration: 1.2, ease: 'expo.out', clearProps: 'transform,opacity', scrollTrigger: { trigger: r, start: 'top 95%' } });
   });
 
   // Карта
-  const dots = document.querySelector('.map__dots');
-  let html = '';
-  for (let y = 20; y < 600; y += 22) for (let x = 10; x < 1000; x += 22) {
-    const n = Math.sin(x * 0.011) * Math.cos(y * 0.017) + Math.sin((x + y) * 0.006);
-    if (n > -0.15) html += `<circle cx="${x}" cy="${y}" r="${(1 + (n + 0.15) * 0.9).toFixed(2)}"/>`;
-  }
-  dots.innerHTML = html;
-  gsap.from('.map__dots circle', { opacity: 0, duration: 1.4, stagger: { each: 0.0015, from: 'center' }, scrollTrigger: { trigger: '.export', start: 'top 70%' } });
-  document.querySelectorAll('.map__routes path').forEach((p) => {
-    const L = p.getTotalLength(); gsap.set(p, { strokeDasharray: L, strokeDashoffset: L });
-  });
-  gsap.to('.map__routes path', { strokeDashoffset: 0, ease: 'none', stagger: 0.15, scrollTrigger: { trigger: '.export', start: 'top 60%', end: 'center 40%', scrub: 1 } });
-  gsap.from('.pt', { scale: 0, opacity: 0, transformOrigin: 'center', duration: 1, ease: 'back.out(2)', stagger: 0.12, scrollTrigger: { trigger: '.export', start: 'top 55%' } });
-
-  // Бегущая строка, реагирует на скорость скролла
-  const mq = document.querySelector('.marquee__inner');
-  const loop = gsap.to(mq, { xPercent: -50, duration: 28, ease: 'none', repeat: -1 });
-  const skew = gsap.quickTo(mq, 'skewX', { duration: 0.6, ease: 'power3' });
-  lenis.on('scroll', ({ velocity }) => {
-    skew(clamp(velocity * -0.35, -14, 14));
-    loop.timeScale(1 + Math.min(Math.abs(velocity) * 0.15, 5));
-  });
+  buildMap();
 
   ScrollTrigger.refresh();
   computeKeys();
+}
+
+/* ---------- Карта поставок: настоящая Европа из точек ---------- */
+async function buildMap() {
+  const svg = document.querySelector('.map');
+  if (!svg || !window.d3 || !window.topojson) return;
+  const W = 1600, H = 900;
+  let world;
+  try {
+    world = await fetch('https://cdn.jsdelivr.net/npm/world-atlas@2.0.2/countries-50m.json').then((r) => r.json());
+  } catch (e) { return; }
+  const countries = topojson.feature(world, world.objects.countries);
+  // все точки поставок помещаются в правую часть кадра (с запасом на обрезку краёв при slice)
+  const proj = d3.geoMercator().fitExtent([[730, 230], [1330, 640]],
+    { type: 'MultiPoint', coordinates: [[2.35, 48.86], [37.62, 55.75], [12.57, 57.5], [20.51, 54.71]] });
+
+  // Растеризуем сушу в скрытый canvas и снимаем точки по сетке
+  const c = document.createElement('canvas');
+  c.width = W; c.height = H;
+  const ctx = c.getContext('2d', { willReadFrequently: true });
+  const gp = d3.geoPath(proj, ctx);
+  ctx.fillStyle = '#ffffff'; ctx.beginPath(); gp(countries); ctx.fill();
+  const HL = new Set(['276', '208', '250']); // Германия, Дания, Франция
+  ctx.fillStyle = '#ff0000'; ctx.beginPath();
+  gp({ type: 'FeatureCollection', features: countries.features.filter((f) => HL.has(String(f.id))) }); ctx.fill();
+  const px = ctx.getImageData(0, 0, W, H).data;
+  const step = 11;
+  let land = '', hl = '';
+  for (let y = step / 2; y < H; y += step) {
+    for (let x = step / 2; x < W; x += step) {
+      const i = ((y | 0) * W + (x | 0)) * 4;
+      if (px[i + 3] < 128) continue;
+      if (px[i + 1] < 128) hl += `<circle cx="${x}" cy="${y}" r="2.2"/>`;
+      else land += `<circle cx="${x}" cy="${y}" r="1.6"/>`;
+    }
+  }
+  svg.querySelector('.map__dots').innerHTML = `<g class="d-land">${land}</g><g class="d-hl">${hl}</g>`;
+  svg.querySelector('.map__borders').setAttribute('d', d3.geoPath(proj)(topojson.mesh(world, world.objects.countries)));
+
+  // Маршруты из Калининграда
+  const home = proj([20.51, 54.71]);
+  const dest = [
+    { n: 'Германия', c: [9.99, 53.55], lx: -16, ly: 32, a: 'end' },
+    { n: 'Дания', c: [12.57, 55.68], lx: -16, ly: -18, a: 'end' },
+    { n: 'Франция', c: [2.35, 48.86], lx: -16, ly: 32, a: 'end' },
+    { n: 'Россия', c: [37.62, 55.75], lx: 16, ly: -18, a: 'start' },
+  ];
+  let routes = '', pts = '';
+  dest.forEach((d, k) => {
+    const p = proj(d.c);
+    const len = Math.hypot(p[0] - home[0], p[1] - home[1]);
+    const cx = (home[0] + p[0]) / 2, cy = (home[1] + p[1]) / 2 - len * 0.34;
+    const path = `M${home[0].toFixed(1)} ${home[1].toFixed(1)} Q${cx.toFixed(1)} ${cy.toFixed(1)} ${p[0].toFixed(1)} ${p[1].toFixed(1)}`;
+    routes += `<path class="r-base" d="${path}"/><path class="r-line" id="route${k}" d="${path}"/>` +
+      `<circle class="r-spark" r="3.4" filter="url(#glow)"><animateMotion dur="${(2.4 + k * 0.5).toFixed(1)}s" repeatCount="indefinite" rotate="auto"><mpath href="#route${k}"/></animateMotion></circle>`;
+    pts += `<g class="pt" transform="translate(${p[0].toFixed(1)} ${p[1].toFixed(1)})"><circle r="14" class="pt__pulse"/><circle r="4.5"/>` +
+      `<text x="${d.lx}" y="${d.ly}" text-anchor="${d.a}">${d.n}</text></g>`;
+  });
+  pts += `<g class="pt pt--home" transform="translate(${home[0].toFixed(1)} ${home[1].toFixed(1)})">` +
+    `<circle r="30" class="pt__pulse"/><circle r="16" class="pt__ring"/><circle r="6"/><text x="22" y="40">Калининград</text></g>`;
+  svg.querySelector('.map__routes').innerHTML = routes;
+  svg.querySelector('.map__points').innerHTML = pts;
+
+  // На телефоне показываем фрагмент вокруг Балтики целиком
+  if (isMobile) {
+    svg.setAttribute('viewBox', `${(home[0] - 560).toFixed(0)} ${(home[1] - 260).toFixed(0)} 860 560`);
+    svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+  }
+
+  const lines = svg.querySelectorAll('.r-line');
+  lines.forEach((p) => { const L = p.getTotalLength(); gsap.set(p, { strokeDasharray: L, strokeDashoffset: L }); });
+  gsap.set('.r-spark', { opacity: 0 });
+  gsap.timeline({ scrollTrigger: { trigger: '.export', start: 'top 65%' } })
+    .from('.map__dots, .map__borders', { opacity: 0, duration: 1.8, ease: 'power2.out' })
+    .from('.map .pt', { scale: 0, opacity: 0, transformOrigin: 'center', duration: 0.9, ease: 'back.out(2)', stagger: 0.1 }, 0.4)
+    .to(lines, { strokeDashoffset: 0, duration: 1.8, ease: 'power2.inOut', stagger: 0.15 }, 0.6)
+    .to('.r-spark', { opacity: 1, duration: 0.6, stagger: 0.15 }, 1.9);
+  gsap.fromTo('.map', { yPercent: 5 }, { yPercent: -5, ease: 'none',
+    scrollTrigger: { trigger: '.export', start: 'top bottom', end: 'bottom top', scrub: true } });
 }
 
 /* ---------- Видео: играют только в кадре ---------- */
