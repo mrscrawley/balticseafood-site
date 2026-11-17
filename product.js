@@ -1,7 +1,7 @@
-import { applyI18n, LI, tr, PRODUCT_LIST } from './i18n.js?v=1794925341';
-import { setupLiquid } from './liquid.js?v=1794925341';
-import { setupHookCursor } from './cursor.js?v=1794925341';
-import { setupTransitions } from './transition.js?v=1794925341';
+import { applyI18n, LI, tr, PRODUCT_LIST } from './i18n.js?v=1794925430';
+import { setupLiquid } from './liquid.js?v=1794925430';
+import { setupHookCursor } from './cursor.js?v=1794925430';
+import { setupTransitions } from './transition.js?v=1794925430';
 
 /* =========================================================
    Страница продукта (заглушка): данные из PRODUCT_LIST

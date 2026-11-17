@@ -265,15 +265,20 @@ section { position: relative; padding: 0 calc(var(--pad) + 56px) 0 var(--pad); }
 /* ---------- Превью в каталоге ---------- */
 .preview {
   /* иллюминатор: круглое окно справа от курсора */
-  position: fixed; left: 0; top: 0; z-index: 25; width: 300px; height: 300px; margin: -150px 0 0 56px;
+  position: fixed; left: 0; top: 0; z-index: 25; width: 340px; height: 340px; margin: -170px 0 0 56px;
   pointer-events: none; border-radius: 50%; overflow: hidden; clip-path: circle(0% at 50% 50%);
   box-shadow: 0 30px 80px rgba(0, 0, 0, .6);
 }
-.preview__inner { position: absolute; inset: 0; border-radius: 50%; overflow: hidden; }
-.preview__inner img { position: absolute; left: -6%; top: -6%; width: 112%; height: 112%; object-fit: cover; filter: saturate(.78) contrast(1.06) brightness(.92); }
+.preview__inner { position: absolute; inset: 0; border-radius: 50%; overflow: hidden;
+  background: radial-gradient(circle at 50% 45%, #27323a 0%, #1a2228 55%, #10161b 100%); }
+/* фото 4:5 целиком вписано в круг, края растворяются в сланцевом фоне */
+.preview__inner img { position: absolute; left: 50%; top: 50%; width: 78%; height: 97%; margin: -48.5% 0 0 -39%; object-fit: cover;
+  filter: saturate(.8) contrast(1.05) brightness(.95);
+  -webkit-mask-image: radial-gradient(ellipse 52% 52% at 50% 50%, #000 74%, transparent 100%);
+          mask-image: radial-gradient(ellipse 52% 52% at 50% 50%, #000 74%, transparent 100%); }
 .preview::before {  /* тонировка под палитру и затемнение к краям */
   content: ''; position: absolute; inset: 0; z-index: 2; border-radius: 50%;
-  background: radial-gradient(circle at 50% 45%, transparent 48%, rgba(4, 12, 18, .55) 78%, rgba(4, 12, 18, .9) 100%),
+  background: radial-gradient(circle at 50% 50%, transparent 60%, rgba(4, 12, 18, .45) 85%, rgba(4, 12, 18, .85) 100%),
               linear-gradient(180deg, rgba(27, 66, 80, .18), rgba(4, 10, 14, .1));
 }
 .preview::after {   /* кольцо иллюминатора */
